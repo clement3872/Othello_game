@@ -9,13 +9,16 @@ class Interface:
 		self.width, self.height = 400, 400 # canvas size
 		self.game_board = board.Board()
 
+		self.size_x = self.width//8
+		self.size_y = self.height//8
+
 		self.root = tk.Tk()
 		self.root.title("Canvas Example")
 
 		self.canvas = tk.Canvas(self.root, width=self.width, height=self.height, bg="#218543") 
 		self.canvas.pack()
 
-		self.canvas.bind("<Button-1>", self.place_pawn)
+		self.canvas.bind("<Button-1>", self.on_click)
 
 		self.clear_button = tk.Button(self.root, text="Clear Canvas", command=self.clear_canvas)
 		self.clear_button.pack()
@@ -24,27 +27,47 @@ class Interface:
 		
 		self.root.mainloop()
 
-	def place_pawn(self, event):
-		size_x = self.width//8
-		size_y = self.height//8
+	def on_click(self, event):
+		x, y = event.x//self.size_x, event.y//self.size_y # get current position
 
-		x, y = event.x//size_x, event.y//size_y # get current position
-		x, y = x*size_x+ size_x//2, y*size_y+ size_y//2
+		# x, y = x*self.size_x+ self.size_x//2, y*self.size_y+ self.size_y//2
+		# self.canvas.create_oval(x-10, y-10, x+10, y+10, fill="blue")
 
-		self.canvas.create_oval(x-10, y-10, x+10, y+10, fill="blue")
+		self.clear_canvas()
+		self.display_grid()
+		self.display_pawns()
+
 
 	def clear_canvas(self):
 		self.canvas.delete("all")
 		self.display_grid()
 
-	def display_grid(self):
-		size_x = self.width//8
-		size_y = self.height//8
+	def display_pawns(self):
+		# "radius" for the pawns
+		pawn_size_x = self.size_x//2.5
+		pawn_size_y = self.size_y//2.5
+		# To place the pawns in the center of a box
+		half_box_x = self.size_x//2
+		half_box_y = self.size_y//2
 
 		for i in range(8):
+			for j in range(8):
+				pawn = self.game_board.get(i,j)
+				if pawn != 0:
+					color = "white" if pawn == 1 else "black"
+					self.canvas.create_oval(
+						self.size_x*i-pawn_size_x + half_box_x, 
+						self.size_y*j-pawn_size_y + half_box_y,
+						self.size_x*i+pawn_size_x + half_box_x, 
+						self.size_y*j+pawn_size_y + half_box_y,
+						fill=color)
+
+
+	def display_grid(self):
+		for i in range(8):
 			if i != 0:
-				tmp_x = size_x*i
-				tmp_y = size_y*i
+				tmp_x = self.size_x*i
+				tmp_y = self.size_y*i
 				self.canvas.create_line(tmp_x,0,tmp_x, self.height, width=3)
 				self.canvas.create_line(0,tmp_y,self.width, tmp_y, width=3)
 
