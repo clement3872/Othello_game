@@ -1,9 +1,6 @@
-import os
 import tkinter as tk
 import board
 
-# Note
-# on est oblige de manger un pion lorsque l'on joue (i.e. c'est a l'autre de jouer)
 
 class Interface:
 	def __init__(self):
@@ -14,12 +11,14 @@ class Interface:
 		self.size_y = self.height//8
 
 		self.root = tk.Tk()
-		self.root.title("Canvas Example")
+		self.root.title("Othello")
 
 		self.canvas = tk.Canvas(self.root, width=self.width, height=self.height, bg="#218543") 
 		self.canvas.pack()
 
 		self.canvas.bind("<Button-1>", self.on_click)
+
+		self.labal_cannot_play = tk.Label(self.root, text="You cannot play this move")
 
 		self.display_grid()
 		self.display_pawns()
@@ -29,6 +28,13 @@ class Interface:
 	def on_click(self, event):
 		# get current position for array
 		x, y = event.x//self.size_x, event.y//self.size_y 
+
+		if self.game_board.get(x,y) != 3:
+			print("You cannot play this move")
+			self.labal_cannot_play.pack()
+			return 1
+		self.labal_cannot_play.pack_forget()
+
 		self.game_board.calculate(x,y)
 
 		# x, y = x*self.size_x+ self.size_x//2, y*self.size_y+ self.size_y//2
@@ -51,8 +57,8 @@ class Interface:
 		half_box_x = self.size_x//2
 		half_box_y = self.size_y//2
 
-		for i in range(8):
-			for j in range(8):
+		for i in range(8): # column
+			for j in range(8): # row
 				pawn = self.game_board.get(i,j)
 				if pawn in (1,2):
 					color = "white" if pawn == 1 else "black"
@@ -69,7 +75,7 @@ class Interface:
 						self.size_y*j-pawn_size_y//2 + half_box_y,
 						self.size_x*i+pawn_size_x//2 + half_box_x, 
 						self.size_y*j+pawn_size_y//2 + half_box_y,
-						fill="gray", outline="#218543")
+						fill="gray", outline="red")
 
 
 	def display_grid(self):
@@ -81,8 +87,6 @@ class Interface:
 				self.canvas.create_line(0,tmp_y,self.width, tmp_y, width=3)
 
 
+
 if __name__ == "__main__":
 	app = Interface()
-
-	if os.path.exists("temp.txt"):
-		os.remove("temp.txt")
