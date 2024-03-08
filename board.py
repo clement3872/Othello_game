@@ -6,7 +6,7 @@ class Board(object):
 	0 = empty
 	1 = white pawn
 	2 = black pawn
-	3 = possible moves (for white team)
+	3 = possible moves 
 	"""
 
 	def __init__(self):
