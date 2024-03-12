@@ -36,7 +36,7 @@ class Interface:
 			return 1
 		self.labal_cannot_play.pack_forget()
 
-		self.game_board.calculate(x,y)
+		self.game_board.place_pawn(x,y)
 
 		# x, y = x*self.size_x+ self.size_x//2, y*self.size_y+ self.size_y//2
 		# self.canvas.create_oval(x-10, y-10, x+10, y+10, fill="blue")

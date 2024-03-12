@@ -61,10 +61,6 @@ def possible_moves_from(board_list, col, row):
 				moves_rec(col, row, direction, points+1)
 
 
-		# elif direc_pawn==opposite_team and direc_pawn!=team:
-		# 	moves_rec(col, row, direction, points+1)
-		# else: return None
-
 	for direction in ["top","bottom","left","right","top_left","top_right","bottom_left","bottom_right"]:
 		moves_rec(col, row, direction)
 
@@ -86,9 +82,31 @@ def board_possible_moves(board_list, team):
 
 	return board_list
 
-def board_place_pawn(board_list, col, row, team):
-	baord_get_direction_index(col,row, direction)
+def board_place_pawn(board_list, col, row, ally_team):
+	opposite_team = "white" if ally_team=="black" else "black"
 
+	# possible_directions = []
+	for direction in ["top","bottom","left","right","top_left","top_right","bottom_left","bottom_right"]:
+		tmp_col, tmp_row = baord_get_direction_index(col,row, direction)
+		while board_get(board_list, tmp_col, tmp_row) == opposite_team:
+			tmp_col, tmp_row = baord_get_direction_index(tmp_col, tmp_row, direction)
+		if board_get(board_list, tmp_col, tmp_row) == ally_team:
+			# possible_directions.append(direction)
+			tmp_col, tmp_row = baord_get_direction_index(col,row, direction)
+			while board_get(board_list, tmp_col, tmp_row) == opposite_team:
+				board_list[board_get_pos(tmp_col, tmp_row)] = ally_team
+				board_list[board_get_pos(col,row)] = ally_team
+				tmp_col, tmp_row = baord_get_direction_index(tmp_col, tmp_row, direction)
+
+	return board_list
+
+def board_clean(board_list):
+	"""removes everything other than pawns"""
+	for i in range(len(board_list)):
+		if board_list[i] not in ("white", "black"): 
+			board_list[i] = 0
+
+	return board_list
 
 
 class Board(object):
@@ -139,22 +157,24 @@ class Board(object):
 		# https://fr.wikipedia.org/wiki/Algorithme_minimax 
 		pass
 
-	def udpate_board(self, new_board):
-		self.board_list = new_board
-
 	def update_with_possible_moves(self):
-		self.board_list = board_possible_moves(self.board_list, self.player_team)
+		self.board_list = self.possible_moves()
 
-	def place_pawn(self, col, row):
-		pass
+	def clean(self):
+		self.board_list = board_clean(self.board_list)
+
+	def place_pawn(self, col, row, team=None):
+		""" function shoud be used for the interface.py
+		team in (None, "white", "black"), None = player_team
+		"""
+		if team is None: team = self.player_team
+		self.board_list = board_place_pawn(self.board_list, col, row, team)
+		self.clean()
+		# self.board_list = self.get_AI_move(self.board_list) 
+		self.update_with_possible_moves()
 
 	def get(self, col, row):
 		return board_get(self.board_list, col, row)
-
-	def calculate(self,row,col):
-		print("Calculating...")
-
-		print("Done calculating.")
 
 
 # to test
