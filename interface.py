@@ -13,7 +13,7 @@ class Interface:
 		self.root = tk.Tk()
 		self.root.title("Othello")
 
-		self.canvas = tk.Canvas(self.root, width=self.width, height=self.height, bg="#218543") 
+		self.canvas = tk.Canvas(self.root, width=self.width, height=self.height, bg="#21854d") 
 		self.canvas.pack()
 
 		self.canvas.bind("<Button-1>", self.on_click)
@@ -30,7 +30,7 @@ class Interface:
 		# get current position for array
 		x, y = event.x//self.size_x, event.y//self.size_y 
 
-		if self.game_board.get(x,y) == 0:
+		if self.game_board.get(x,y) == 0 or self.game_board.get(x,y) in ("white","black"):
 			print("You cannot play this move")
 			self.labal_cannot_play.pack()
 			return 1
