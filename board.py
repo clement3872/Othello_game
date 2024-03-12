@@ -17,10 +17,10 @@ def possible_moves_from(board_list, col, row):
 	if col<0 or col>7 or row<0 or row>7: return board_list
 	team = board_get(board_list, col, row)
 	if team == 0: return board_list
-	possible_move_color = 3 if team == 1 else 4
+	opposite_team = "white" if team=="black" else "black"
 
-	def moves_rec(col, row, direction):
-		current_team = board_get(board_list, col, row)
+	def moves_rec(col, row, direction, points=0):
+		current_pawn = board_get(board_list, col, row)
 		checked = False
 		if direction == "top" and row >= 1:
 			row -= 1; checked = True
@@ -31,6 +31,7 @@ def possible_moves_from(board_list, col, row):
 		elif direction == "right" and col <= 6:
 			col += 1; checked = True
 
+		# diagonals
 		elif direction == "top_left" and row >= 1 and col >= 1:
 			row -= 1; col -= 1; checked = True
 		elif direction == "top_right" and row >= 1 and col <= 6:
@@ -43,28 +44,13 @@ def possible_moves_from(board_list, col, row):
 		if checked:
 			# pawn of the next position, depends on direction
 			direc_pawn = board_get(board_list, col, row) 
-			if (current_team != team and direc_pawn==0) or direc_pawn==possible_move_color:
-				board_list[board_get_pos(col, row)] = possible_move_color
-			elif direc_pawn != current_team and direc_pawn != 0:
-				return moves_rec(col, row, direction)
+			if current_pawn==opposite_team and direc_pawn==0:
+				board_list[board_get_pos(col, row)] = points
+			elif direc_pawn==opposite_team and direc_pawn!=current_pawn:
+				moves_rec(col, row, direction, points+1)
 
-		return board_list
-
-	def fusion(l1, l2):
-		l = []
-		for i in range(len(l1)):
-			l.append(max(l1[i], l2[i]))
-		return l
-
-	board_list = moves_rec(col, row, "top")
-	board_list = fusion(board_list, moves_rec(col, row, "bottom"))
-	board_list = fusion(board_list, moves_rec(col, row, "left"))
-	board_list = fusion(board_list, moves_rec(col, row, "right"))
-
-	board_list = fusion(board_list, moves_rec(col, row, "top_left"))
-	board_list = fusion(board_list, moves_rec(col, row, "top_right"))
-	board_list = fusion(board_list, moves_rec(col, row, "bottom_left"))
-	board_list = fusion(board_list, moves_rec(col, row, "bottom_right"))
+	for direction in ["top","bottom","left","right","top_left","top_right","bottom_left","bottom_right"]:
+		moves_rec(col, row, direction)
 
 	return board_list
 
@@ -72,11 +58,17 @@ def board_possible_moves(board_list, team):
 	"""
 	team -> type: int, team in [1,2]
 	"""
+	def fusion(l1, l2):
+		l = []
+		for i in range(len(l1)):
+			l.append(max(l1[i], l2[i]))
+		return l
+
 	for col in range(8):
 		for row in range(8):
 			pawn = board_get(board_list, col, row)
 			if pawn != 0 and pawn==team:
-				board_list = possible_moves_from(board_list, col, row)
+				board_list = fusion(board_list, possible_moves_from(board_list, col, row))
 
 	return board_list
 
@@ -84,15 +76,13 @@ def board_possible_moves(board_list, team):
 class Board(object):
 	"""
 	0 = empty
-	1 = white pawn
-	2 = black pawn
-	3 = possible moves for white
-	4 = possible moves for black
+	"w" = white pawn
+	"b" = black pawn
 	"""
 
 	def __init__(self, player_team="black"):
-		self.player_team = 2 if player_team=="black" else 1
-		self.AI_team = 1 if player_team=="black" else 2
+		self.player_team = player_team
+		self.AI_team = "white" if player_team=="black" else "black"
 
 		self.player_to_play = player_team == 2
 
@@ -100,8 +90,8 @@ class Board(object):
 			0, 0, 0, 0, 0, 0, 0, 0,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			0, 0, 0, 0, 0, 0, 0, 0,
-			0, 0, 0, 1, 2, 0, 0, 0,
-			0, 0, 0, 2, 1, 0, 0, 0,
+			0, 0, 0, "white", "black", 0, 0, 0,
+			0, 0, 0, "black", "white", 0, 0, 0,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			0, 0, 0, 0, 0, 0, 0, 0
@@ -132,6 +122,10 @@ class Board(object):
 	def udpate_board(self, new_board):
 		self.board_list = new_board
 
+	def update_with_possible_moves(self):
+		self.board_list = board_possible_moves(self.board_list, self.player_team)
+
+
 	def get(self, col, row):
 		return board_get(self.board_list, col, row)
 
@@ -146,6 +140,6 @@ if __name__ == '__main__':
 	b = Board()
 	# b.calculate(0,0)
 
-	t = possible_moves_from(b.board_list, 3,4)
+	t = board_possible_moves(b.board_list, "white")
 	for i in range(8):
 		print(t[i*8:(i+1)*8])

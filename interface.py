@@ -20,6 +20,7 @@ class Interface:
 
 		self.labal_cannot_play = tk.Label(self.root, text="You cannot play this move")
 
+		self.game_board.update_with_possible_moves()
 		self.display_grid()
 		self.display_pawns()
 		
@@ -29,7 +30,7 @@ class Interface:
 		# get current position for array
 		x, y = event.x//self.size_x, event.y//self.size_y 
 
-		if self.game_board.get(x,y) != 3:
+		if self.game_board.get(x,y) == 0:
 			print("You cannot play this move")
 			self.labal_cannot_play.pack()
 			return 1
@@ -60,22 +61,22 @@ class Interface:
 		for i in range(8): # column
 			for j in range(8): # row
 				pawn = self.game_board.get(i,j)
-				if pawn in (1,2):
-					color = "white" if pawn == 1 else "black"
+				if pawn in ("white","black"):
+					color = pawn
 					self.canvas.create_oval(
 						self.size_x*i-pawn_size_x + half_box_x, 
 						self.size_y*j-pawn_size_y + half_box_y,
 						self.size_x*i+pawn_size_x + half_box_x, 
 						self.size_y*j+pawn_size_y + half_box_y,
 						fill=color, outline=color)
-				elif pawn == 3:
+				elif pawn > 0:
 					# possible moves marker
 					self.canvas.create_oval(
 						self.size_x*i-pawn_size_x//2 + half_box_x, 
 						self.size_y*j-pawn_size_y//2 + half_box_y,
 						self.size_x*i+pawn_size_x//2 + half_box_x, 
 						self.size_y*j+pawn_size_y//2 + half_box_y,
-						fill="gray", outline="red")
+						fill="gray", outline="orange")
 
 
 	def display_grid(self):
