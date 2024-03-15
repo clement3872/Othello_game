@@ -32,6 +32,8 @@ def baord_get_direction_index(col,row, direction):
 
 	return (col, row)
 
+def are_coords_out_of_bounds(col, row):
+	return col<1 or col>6 or row<1 or row>6
 
 def possible_moves_from(board_list, col, row):
 	"""moves you can do thanks to a pawn"""
@@ -42,11 +44,12 @@ def possible_moves_from(board_list, col, row):
 
 	def moves_rec(col, row, direction, points=0):
 		current_pawn = board_get(board_list, col, row)
-		tmp_col, tmp_row = col, row
-		col,row = baord_get_direction_index(col,row, direction)
 
-		# to avoid problems with recurtion
-		if (tmp_col, tmp_row) == (col, row): return None 
+		# to avoid recursion problems
+		if are_coords_out_of_bounds(col, row):
+			return None
+
+		col,row = baord_get_direction_index(col,row, direction)
 
 		# pawn of the next position, depends on direction
 		direc_pawn = board_get(board_list, col, row) 
@@ -88,7 +91,9 @@ def board_place_pawn(board_list, col, row, ally_team):
 	# possible_directions = []
 	for direction in ["top","bottom","left","right","top_left","top_right","bottom_left","bottom_right"]:
 		tmp_col, tmp_row = baord_get_direction_index(col,row, direction)
-		while board_get(board_list, tmp_col, tmp_row) == opposite_team:
+		print(tmp_col, tmp_row)
+		while board_get(board_list, tmp_col, tmp_row) == opposite_team\
+		and not are_coords_out_of_bounds(tmp_col, tmp_row):
 			tmp_col, tmp_row = baord_get_direction_index(tmp_col, tmp_row, direction)
 		if board_get(board_list, tmp_col, tmp_row) == ally_team:
 			# possible_directions.append(direction)
@@ -117,7 +122,8 @@ class Board(object):
 	n = points for a certain move
 	"""
 
-	def __init__(self, player_team="black"):
+	def __init__(self, nb_players=1, player_team="black"):
+		self.nb_players = nb_players
 		self.player_team = player_team
 		self.AI_team = "white" if player_team=="black" else "black"
 
@@ -133,6 +139,7 @@ class Board(object):
 			0, 0, 0, 0, 0, 0, 0, 0,
 			0, 0, 0, 0, 0, 0, 0, 0
 		]
+
 
 	def get_points(self, col, row, board):
 		"""get points for a certain move"""
@@ -167,7 +174,13 @@ class Board(object):
 		""" function shoud be used for the interface.py
 		team in (None, "white", "black"), None = player_team
 		"""
-		if team is None: team = self.player_team
+
+		team = self.player_team
+		if team is None or self.nb_players == 2: 
+			self.player_team = self.AI_team
+			self.AI_team = team
+
+
 		self.board_list = board_place_pawn(self.board_list, col, row, team)
 		self.clean()
 		# self.board_list = self.get_AI_move(self.board_list) 

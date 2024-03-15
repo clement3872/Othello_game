@@ -5,7 +5,7 @@ import board
 class Interface:
 	def __init__(self):
 		self.width, self.height = 600, 600 # canvas size
-		self.game_board = board.Board()
+		self.game_board = board.Board(nb_players=2)
 
 		self.size_x = self.width//8
 		self.size_y = self.height//8
