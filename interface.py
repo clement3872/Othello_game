@@ -3,29 +3,29 @@ import board
 
 
 class Interface:
-	def __init__(self):
+	def __init__(self, nb_players):
 		self.width, self.height = 600, 600 # canvas size
-		self.game_board = board.Board(nb_players=2)
+		self.game_board = board.Board(nb_players)
 
 		self.size_x = self.width//8
 		self.size_y = self.height//8
 
-		self.root = tk.Tk()
-		self.root.title("Othello")
+		self.root1 = tk.Tk()
+		self.root1.title("Plateau de l'Othello")
 
-		self.canvas = tk.Canvas(self.root, width=self.width, height=self.height, bg="#21854d") 
+		self.canvas = tk.Canvas(self.root1, width=self.width, height=self.height, bg="#21854d") 
 		self.canvas.pack()
 
 		self.canvas.bind("<Button-1>", self.on_click)
 
-		self.labal_cannot_play = tk.Label(self.root, text="You cannot play this move")
+		self.labal_cannot_play = tk.Label(self.root1, text="You cannot play this move")
 
 		self.game_board.update_with_possible_moves()
 		self.display_grid()
 		self.display_pawns()
-		
-		self.root.mainloop()
 
+
+	
 	def on_click(self, event):
 		# get current position for array
 		x, y = event.x//self.size_x, event.y//self.size_y 
