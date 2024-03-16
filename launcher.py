@@ -16,7 +16,7 @@ class Main_Interface:
 		pygame.mixer.init()
 
 		# Load musique
-		pygame.mixer.music.load("C:/Users/dsang/Desktop/Othello_game/Ressources/Airship Thunderchild par Otto Halmén une bande originale épique libre de droit.mp3")
+		pygame.mixer.music.load("Ressources/Airship_Thunderchild_opensource.mp3")
 		# Play music continuously
 		pygame.mixer.music.play(loops=-1)
 
@@ -54,7 +54,7 @@ class Main_Interface:
 		self.canvas_choose = tk.Canvas(self.root_choose, width=500, height=500)
 		self.canvas_choose.grid(row=10, column=10)
 
-		#self.image_black = tk.PhotoImage(file="C:/Users/dsang/Desktop/Othello_game/Ressources/pion.png")
+		#self.image_black = tk.PhotoImage(file="C:/Users/dsang/Desktop/Othello_game/Ressources/pawn.png")
 		#self.button_black = tk.Button(self.root_choose, text="Black", image=self.image_black, compound=tk.LEFT, command=lambda: Interface(2))
 
 		self.button_black = tk.Button(self.root_choose, text="Black", command=lambda: Interface(2))
