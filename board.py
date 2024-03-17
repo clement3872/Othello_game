@@ -29,7 +29,6 @@ def baord_get_direction_index(col,row, direction):
 		row += 1; col -= 1
 	elif direction == "bottom_right" and row <= 6 and col <= 6:
 		row += 1; col += 1
-
 	return (col, row)
 
 def are_coords_out_of_bounds(col, row):
@@ -102,7 +101,6 @@ def board_place_pawn(board_list, col, row, ally_team):
 				board_list[board_get_pos(tmp_col, tmp_row)] = ally_team
 				board_list[board_get_pos(col,row)] = ally_team
 				tmp_col, tmp_row = baord_get_direction_index(tmp_col, tmp_row, direction)
-
 	return board_list
 
 def board_clean(board_list):
@@ -126,7 +124,7 @@ class Board(object):
 		self.nb_players = nb_players
 		self.player_team = player_team
 		self.AI_team = "white" if player_team=="black" else "black"
-
+		self.unplayble_round = 0
 		self.player_to_play = player_team == 2
 
 		self.board_list = [
@@ -185,10 +183,18 @@ class Board(object):
 		self.clean()
 		# self.board_list = self.get_AI_move(self.board_list) 
 		self.update_with_possible_moves()
+		print(self.is_playable())
 
 	def get(self, col, row):
 		return board_get(self.board_list, col, row)
 
+	def is_playable(self):
+		if 1 in self.board_list:
+			self.unplayble_round = 0
+			return True
+		else:
+			self.unplayble_round += 1
+			return False
 
 # to test
 if __name__ == '__main__':

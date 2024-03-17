@@ -18,7 +18,7 @@ class Interface:
 
 		self.canvas.bind("<Button-1>", self.on_click)
 
-		self.labal_cannot_play = tk.Label(self.root1, text="You cannot play this move")
+		self.label_display = tk.Label(self.root1, text=self.game_board.player_team)
 
 		self.game_board.update_with_possible_moves()
 		self.display_grid()
@@ -29,15 +29,17 @@ class Interface:
 	def on_click(self, event):
 		# get current position for array
 		x, y = event.x//self.size_x, event.y//self.size_y 
-
 		if self.game_board.get(x,y) == 0 or self.game_board.get(x,y) in ("white","black"):
 			print("You cannot play this move")
-			self.labal_cannot_play.pack()
+			self.label_display.pack_forget()
+			self.label_display = tk.Label(self.root1, text="you cannot play here")
+			self.label_display.pack()
 			return 1
-		self.labal_cannot_play.pack_forget()
 
 		self.game_board.place_pawn(x,y)
-
+		self.label_display.pack_forget()
+		self.label_display = tk.Label(self.root1, text=self.game_board.player_team)
+		self.label_display.pack()
 		# x, y = x*self.size_x+ self.size_x//2, y*self.size_y+ self.size_y//2
 		# self.canvas.create_oval(x-10, y-10, x+10, y+10, fill="blue")
 
@@ -80,12 +82,11 @@ class Interface:
 
 
 	def display_grid(self):
-		for i in range(8):
-			if i != 0:
-				tmp_x = self.size_x*i
-				tmp_y = self.size_y*i
-				self.canvas.create_line(tmp_x,0,tmp_x, self.height, width=3)
-				self.canvas.create_line(0,tmp_y,self.width, tmp_y, width=3)
+		for i in range(1,8):
+			tmp_x = self.size_x*i
+			tmp_y = self.size_y*i
+			self.canvas.create_line(tmp_x,0,tmp_x, self.height, width=3)
+			self.canvas.create_line(0,tmp_y,self.width, tmp_y, width=3)
 
 
 
