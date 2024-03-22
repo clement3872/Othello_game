@@ -49,20 +49,24 @@ class Main_Interface:
 		# Choose the color 
 		# Note : The blacks begins
 		self.root_choose = tk.Tk()
+		self.root_choose.geometry("600x600")
 		self.root_choose.title("Choose color")
+
+		self.canvas_choose = tk.Canvas(self.root_choose, width=600, height=500)
+		self.canvas_choose.grid(row=0, column=1, pady=1, padx=1)
 		
-		self.canvas_choose = tk.Canvas(self.root_choose, width=500, height=500)
-		self.canvas_choose.grid(row=10, column=10)
-
-		#self.image_black = tk.PhotoImage(file="C:/Users/dsang/Desktop/Othello_game/Ressources/pawn.png")
-		#self.button_black = tk.Button(self.root_choose, text="Black", image=self.image_black, compound=tk.LEFT, command=lambda: Interface(2))
-
-		self.button_black = tk.Button(self.root_choose, text="Black", command=lambda: Interface(2))
-		self.button_black.grid(row=10,column=10, columnspan=10)
+		self.lab_choose = tk.Label(self.canvas_choose, text="Choose your team")
+		self.lab_choose.grid(row=0, column=0, columnspan=2)
 		
-		self.button_white = tk.Button(self.root_choose, text="White", command=lambda: Interface(2))
-		self.button_white.grid(row=10,column=11, columnspan=5)
+		self.image_b = tk.PhotoImage(master=self.root_choose, file="Ressources/black_p.png")
+		self.image_w = tk.PhotoImage(master=self.root_choose, file="Ressources/white_p.png")
 
+		self.button_black = tk.Button(self.root_choose, text="Black",  image=self.image_b, command=lambda: Interface(2),compound=tk.LEFT)
+		self.button_black.grid(row=1, column=0, padx=10)
+
+		self.button_white = tk.Button(self.root_choose, text="White", image=self.image_w, command=lambda: Interface(2), compound=tk.LEFT)
+		self.button_white.grid(row=1, column=1, padx=10)
+		
 		self.root_choose.mainloop()
 
 

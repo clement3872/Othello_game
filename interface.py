@@ -91,4 +91,4 @@ class Interface:
 
 
 if __name__ == "__main__":
-	app = Interface()
+	app = Interface(2)
