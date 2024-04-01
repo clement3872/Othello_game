@@ -90,7 +90,7 @@ def board_place_pawn(board_list, col, row, ally_team):
 	# possible_directions = []
 	for direction in ["top","bottom","left","right","top_left","top_right","bottom_left","bottom_right"]:
 		tmp_col, tmp_row = baord_get_direction_index(col,row, direction)
-		print(tmp_col, tmp_row)
+		# print(tmp_col, tmp_row)
 		while board_get(board_list, tmp_col, tmp_row) == opposite_team\
 		and not are_coords_out_of_bounds(tmp_col, tmp_row):
 			tmp_col, tmp_row = baord_get_direction_index(tmp_col, tmp_row, direction)
@@ -139,10 +139,6 @@ class Board(object):
 		]
 
 
-	def get_points(self, col, row, board):
-		"""get points for a certain move"""
-		pass
-
 	def possible_moves(self, team="player", board_list=None):
 		"""returns a board_list of the possible moves
 		team -> type: String
@@ -183,18 +179,19 @@ class Board(object):
 		self.clean()
 		# self.board_list = self.get_AI_move(self.board_list) 
 		self.update_with_possible_moves()
-		print(self.is_playable())
+		self.is_playable() 
 
 	def get(self, col, row):
 		return board_get(self.board_list, col, row)
 
 	def is_playable(self):
-		if 1 in self.board_list:
-			self.unplayble_round = 0
-			return True
-		else:
-			self.unplayble_round += 1
-			return False
+		# do not run 2 times in a "single move"
+		for el in self.board_list:
+			if el not in ("black", "white") and el > 0:
+				self.unplayble_round = 0
+				return True
+		self.unplayble_round += 1
+		return False
 
 # to test
 if __name__ == '__main__':
