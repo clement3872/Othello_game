@@ -192,6 +192,13 @@ class Board(object):
 				return True
 		self.unplayble_round += 1
 		return False
+	
+	def board_is_full(self):
+		for pawn in self.board_list:
+			if pawn not in ["black", "white"]:
+				return False
+		return True
+		
 
 # to test
 if __name__ == '__main__':

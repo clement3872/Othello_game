@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import messagebox as tkm
 import board
 
 
@@ -9,12 +10,13 @@ class Interface:
 
 		self.size_x = self.width//8
 		self.size_y = self.height//8
+		self.player_scores = {"black": 2, "white": 2}
 
 		self.root1 = tk.Tk()
 		self.root1.title("Plateau de l'Othello")
 
 		self.canvas = tk.Canvas(self.root1, width=self.width, height=self.height, bg="#21854d") 
-		self.canvas.pack()
+		self.canvas.pack() 
 
 		self.canvas.bind("<Button-1>", self.on_click)
 
@@ -24,8 +26,13 @@ class Interface:
 		self.display_grid()
 		self.display_pawns()
 
+		self.score_blk = tk.Label(self.root1, text="Black: " + str(self.player_scores["black"])) 
+		self.score_wht = tk.Label(self.root1, text="White: " + str(self.player_scores["white"]))
 
-	
+		self.score_blk.pack(side=tk.LEFT)
+		self.score_wht.pack(side=tk.LEFT)
+
+
 	def on_click(self, event):
 		# get current position for array
 		x, y = event.x//self.size_x, event.y//self.size_y 
@@ -46,6 +53,8 @@ class Interface:
 		self.clear_canvas()
 		self.display_grid()
 		self.display_pawns()
+		self.check_board_is_full()
+		self.update_score()
 
 
 	def clear_canvas(self):
@@ -87,7 +96,23 @@ class Interface:
 			tmp_y = self.size_y*i
 			self.canvas.create_line(tmp_x,0,tmp_x, self.height, width=3)
 			self.canvas.create_line(0,tmp_y,self.width, tmp_y, width=3)
+	
+	def check_board_is_full(self):
+		if self.game_board.board_is_full():
+			tkm.showinfo("Finish !")
+	
+	def update_score(self):
+		"""
+		For each move, calculate the number of occurrences of pawns in the list
+		"""
+		b_score = self.game_board.board_list.count("black")
+		w_score = self.game_board.board_list.count("white")
 
+		self.player_scores["black"] = b_score
+		self.player_scores["white"] = w_score
+
+		self.score_blk.config(text="Black: " + str(self.player_scores["black"]))
+		self.score_wht.config(text="White: " + str(self.player_scores["white"]))
 
 
 if __name__ == "__main__":
