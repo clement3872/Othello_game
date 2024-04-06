@@ -60,15 +60,24 @@ class Main_Interface:
 		
 		self.image_b = tk.PhotoImage(master=self.root_choose, file="Ressources/black_p.png")
 		self.image_w = tk.PhotoImage(master=self.root_choose, file="Ressources/white_p.png")
+		
 
-		self.button_black = tk.Button(self.root_choose, text="Black",  image=self.image_b, command=lambda: Interface(2),compound=tk.LEFT)
+		self.button_black = tk.Button(self.root_choose,
+            text="Black",
+            image=self.image_b,
+            compound=tk.LEFT,
+            command=lambda: (Interface(2), self.root_choose.destroy())  # Close window after creating Interface
+        )
 		self.button_black.grid(row=1, column=0, padx=10)
 
-		self.button_white = tk.Button(self.root_choose, text="White", image=self.image_w, command=lambda: Interface(2), compound=tk.LEFT)
+		self.button_white = tk.Button(
+            self.root_choose,
+            text="White",
+            image=self.image_w,
+            compound=tk.LEFT,
+            command=lambda: (Interface(2), self.root_choose.destroy())  # Close window after creating Interface
+        )
 		self.button_white.grid(row=1, column=1, padx=10)
-		
 		self.root_choose.mainloop()
-
-
 if __name__ == "__main__":
 	app = Main_Interface()
