@@ -19,6 +19,9 @@ class Interface:
 		self.canvas.pack() 
 
 		self.canvas.bind("<Button-1>", self.on_click)
+		# Redo button
+		self.redo_button = tk.Button(self.root1, text="Redo", command=self.redo_move)
+		self.redo_button.pack(side=tk.LEFT)  # Place it below the score labels
 
 		self.label_display = tk.Label(self.root1, text=self.game_board.player_team)
 
@@ -100,6 +103,14 @@ class Interface:
 	def check_board_is_full(self):
 		if self.game_board.board_is_full():
 			tkm.showinfo("Finish !")
+
+	def redo_move(self):
+		if self.game_board.redo():
+			self.clear_canvas()
+			self.display_pawns()
+			self.update_score()
+		else:
+			tkm.showinfo("No Moves to Redo", "There are no moves to redo.")
 	
 	def update_score(self):
 		"""

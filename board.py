@@ -126,7 +126,7 @@ class Board(object):
 		self.AI_team = "white" if player_team=="black" else "black"
 		self.unplayble_round = 0
 		self.player_to_play = player_team == 2
-
+	
 		self.board_list = [
 			0, 0, 0, 0, 0, 0, 0, 0,
 			0, 0, 0, 0, 0, 0, 0, 0,
@@ -137,7 +137,7 @@ class Board(object):
 			0, 0, 0, 0, 0, 0, 0, 0,
 			0, 0, 0, 0, 0, 0, 0, 0
 		]
-
+		self.history = []  # Initialize empty history list
 
 	def possible_moves(self, team="player", board_list=None):
 		"""returns a board_list of the possible moves
@@ -174,7 +174,7 @@ class Board(object):
 			self.player_team = self.AI_team
 			self.AI_team = team
 
-
+		self.history.append(self.board_list.copy())
 		self.board_list = board_place_pawn(self.board_list, col, row, team)
 		self.clean()
 		# self.board_list = self.get_AI_move(self.board_list) 
@@ -185,14 +185,25 @@ class Board(object):
 		return board_get(self.board_list, col, row)
 
 	def is_playable(self):
-		# do not run 2 times in a "single move"
+		"""Checks if there are any playable moves remaining for the current player.
+
+		Returns:
+			bool: True if there are playable moves, False otherwise.
+		"""
 		for el in self.board_list:
 			if el not in ("black", "white") and el > 0:
 				self.unplayble_round = 0
 				return True
 		self.unplayble_round += 1
 		return False
-	
+	def redo(self):
+		if self.history:
+			last_board = self.history.pop()
+			self.board_list = last_board
+			return True
+		else:
+			return False
+		
 	def board_is_full(self):
 		for pawn in self.board_list:
 			if pawn not in ["black", "white"]:
