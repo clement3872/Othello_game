@@ -138,11 +138,11 @@ class Interface(Tk):
         """Open a popup if board is full"""
         if self.game_board.is_full():
             if self.b_score > self.w_score:
-                tkm.showinfo("The black wins")
+                tkm.showinfo("Winner", "Blacks won")
             elif self.b_score < self.w_score:
-                tkm.showinfo("The white wins")
+                tkm.showinfo("Winner", "Whites won")
             else:
-                tkm.showinfo("Egalité")
+                tkm.showinfo("Winner", "Draw")
 
     # Cancel the last move
     def undo_move(self):
