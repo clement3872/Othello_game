@@ -265,7 +265,7 @@ class Board(object):
 		self.unplayble_round += 1
 		return False
 
-	def redo(self):
+	def undo(self):
 		if self.history:
 			last_board = self.history.pop()
 			self.board_list = last_board
