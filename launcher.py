@@ -2,7 +2,6 @@ import tkinter as tk
 from tkinter import *
 from datetime import datetime
 import interface as inter
-import rule
 import musik as mk
 
 
@@ -25,7 +24,7 @@ class Main_Interface(Tk):
 		self.main_canvas.grid()
 		
         # Button for player vs player
-		self.button_p_vs_p = tk.Button(self.main_canvas,width= 110, height=40,image=self.image_button_p, command=self.menu_choose_color)
+		self.button_p_vs_p = tk.Button(self.main_canvas,width= 110, height=40,image=self.image_button_p, command=lambda:self.call_game(2,"black"))
 		self.button_p_vs_p.place(x=60, y=140)
 		
         # Button for player vs AI
@@ -88,19 +87,19 @@ class Main_Interface(Tk):
 		self.image_b = tk.PhotoImage(master=self.canvas_choose, file="Ressources/images/black_p.png")
 		self.image_w = tk.PhotoImage(master=self.canvas_choose, file="Ressources/images/white_p.png")
 
-		self.button_black = tk.Button(self.canvas_choose, text="Black",  image=self.image_b, command=self.call_game,compound=tk.LEFT)
+		self.button_black = tk.Button(self.canvas_choose, text="Black",  image=self.image_b, command=lambda:self.call_game(1,"black"),compound=tk.LEFT)
 		self.button_black.grid(row=1, column=0, padx=10)
 
-		self.button_white = tk.Button(self.canvas_choose, text="White", image=self.image_w, command=self.call_game, compound=tk.LEFT)
+		self.button_white = tk.Button(self.canvas_choose, text="White", image=self.image_w, command=lambda:self.call_game(1,"white"), compound=tk.LEFT)
 		self.button_white.grid(row=1, column=1, padx=10)
 		
 		self.button_back2 = tk.Button(self.canvas_choose, text="Previous page", command=self.back_main_menu)
 		self.button_back2.grid(row=2, column=0, pady=10)
 
-	def call_game(self):
+	def call_game(self, nb_players=2, player_team="black"):
 		self.exit_func()
 		mk.music_player.swap_interface()
-		inter.Interface(2)
+		inter.Interface(nb_players, player_team)
 		
 	def exit_func(self):
 		mk.music_player.destroy()

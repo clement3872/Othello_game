@@ -124,7 +124,7 @@ if __name__ == "__main__":
             print(board_list[i*8:(i+1)*8])
         print_board_list(board_list)
         if player_team == "white":
-            x, y = minimax(board_list, 8, player_team, -999, 999)[1]  # Depth 3 for simplicity
+            x, y = minimax(board_list, 8, player_team, -999, 999)[1]  # Depth 8
             apply_move(board_list, player_team, x, y)
         else:
             print("Enter your move (col then row): ")

@@ -45,23 +45,23 @@ class Connexion(Con_inscr):
         with open(os.path.join(sys.path[0], "userbase.txt"), "r") as lire:
             k = lire.readlines()
 
-            for i in k:
-                a = i.rstrip("\n").split(":")
-                dico[a[0]] = a[-1]
-            
-            if id == "" or mdp1 == "":
-                Label(self, text="Veuillez écrire dans les champs obligatoires !").place(x =10, y = 130)  
-            
-            else :
-                if id in dico.keys():
-                    if dico[id] != mdp1 :
-                        Label(self, text="Votre mot de passe ou identifiant est faux.").place(x =10, y = 130) 
-                    else:
-                        self.destroy()
-                        mk.music_player.start_music()
-                        a = Main_Interface(id)
-                else:   
-                    Label(self, text="Vérifier si votre identifiant est bon, sinon veuillez-vous inscrire.").place(x =10, y = 130) 
+        for i in k:
+            a = i.rstrip("\n").split(":")
+            dico[a[0]] = a[-1]
+        
+        if id == "" or mdp1 == "":
+            Label(self, text="Veuillez écrire dans les champs obligatoires !").place(x =10, y = 130)  
+        
+        else :
+            if id in dico.keys():
+                if dico[id] != mdp1 :
+                    Label(self, text="Votre mot de passe ou identifiant est faux.").place(x =10, y = 130) 
+                else:
+                    self.destroy()
+                    mk.music_player.start_music()
+                    a = Main_Interface(id)
+            else:   
+                Label(self, text="Vérifier si votre identifiant est bon, sinon veuillez-vous inscrire.").place(x =10, y = 130) 
 
 
     def supp_page(self):

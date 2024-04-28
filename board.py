@@ -1,4 +1,4 @@
-
+import ai
 # Note
 # on est oblige de manger un pion lorsque l'on joue (i.e. c'est a l'autre de jouer)
 
@@ -31,8 +31,21 @@ def baord_get_direction_index(col,row, direction):
 		row += 1; col += 1
 	return (col, row)
 
-def are_coords_out_of_bounds(col, row):
-	return col<1 or col>6 or row<1 or row>6
+def coords_in_bounds(col, row, direction):
+	"""check if future coordinates are in bounds"""
+ 
+	if direction == "top": return row >= 1
+	elif direction == "bottom": return row <= 6
+	elif direction == "left": return col >= 1
+	elif direction == "right": return col <= 6
+
+	# diagonals
+	elif direction == "top_left": return row >= 1 and col >= 1
+	elif direction == "top_right": return row >= 1 and col <= 6
+	elif direction == "bottom_left": return row <= 6 and col >= 1
+	elif direction == "bottom_right": return row <= 6 and col <= 6
+	else: return False # should never happen
+
 
 def possible_moves_from(board_list, col, row):
 	"""moves you can do thanks to a pawn"""
@@ -43,30 +56,32 @@ def possible_moves_from(board_list, col, row):
 
 	def moves_rec(col, row, direction, points=0):
 		current_pawn = board_get(board_list, col, row)
-
 		# to avoid recursion problems
-		if are_coords_out_of_bounds(col, row):
+		if not coords_in_bounds(col, row, direction):
 			return None
+		if direction == "bot": print(current_pawn, col, row, points, opposite_team)
 
 		col,row = baord_get_direction_index(col,row, direction)
 
-		# pawn of the next position, depends on direction
+		# pawn of the next position, depends of the direction
 		direc_pawn = board_get(board_list, col, row) 
 
 		if current_pawn==opposite_team and type(direc_pawn)==type(int()):
 			board_list[board_get_pos(col, row)] = points + direc_pawn
-			# board_list[board_get_pos(col, row)] = points
 
-		elif direc_pawn==opposite_team\
-			and ((current_pawn==team and points==0)\
-			or (points>0 and current_pawn==opposite_team)):
-				moves_rec(col, row, direction, points+1)
+		# elif direc_pawn==opposite_team\
+		# 	and ((current_pawn==team and points==0)\
+		# 	or (points>0 and current_pawn==opposite_team)):
+		# 		moves_rec(col, row, direction, points+1)
+		elif direc_pawn==opposite_team:
+			moves_rec(col, row, direction, points+1)
 
 
-	for direction in ["top","bottom","left","right","top_left","top_right","bottom_left","bottom_right"]:
+	for direction in ("top","bottom","left","right","top_left","top_right","bottom_left","bottom_right"):
 		moves_rec(col, row, direction)
 
 	return board_list
+
 
 def board_possible_moves(board_list, team):
 	"""moves you can do thanks to all pawns"""
@@ -80,9 +95,12 @@ def board_possible_moves(board_list, team):
 		for row in range(8):
 			pawn = board_get(board_list, col, row)
 			if pawn != 0 and pawn==team:
-				board_list = fusion(board_list, possible_moves_from(board_list, col, row))
+				board_list = possible_moves_from(board_list, col, row)
 
 	return board_list
+
+def coords_out_of_bound_place(col, row):
+	return col<1 or col>6 or row<1 or row>6
 
 def board_place_pawn(board_list, col, row, ally_team):
 	opposite_team = "white" if ally_team=="black" else "black"
@@ -92,8 +110,9 @@ def board_place_pawn(board_list, col, row, ally_team):
 		tmp_col, tmp_row = baord_get_direction_index(col,row, direction)
 		# print(tmp_col, tmp_row)
 		while board_get(board_list, tmp_col, tmp_row) == opposite_team\
-		and not are_coords_out_of_bounds(tmp_col, tmp_row):
+		and coords_in_bounds(tmp_col, tmp_row, direction):
 			tmp_col, tmp_row = baord_get_direction_index(tmp_col, tmp_row, direction)
+			1
 		if board_get(board_list, tmp_col, tmp_row) == ally_team:
 			# possible_directions.append(direction)
 			tmp_col, tmp_row = baord_get_direction_index(col,row, direction)
@@ -112,6 +131,13 @@ def board_clean(board_list):
 	return board_list
 
 
+def board_get_AI_move(board_list, AI_team):
+	board_list = board_possible_moves(board_list,AI_team)
+	col,row = ai.minimax(board_list, 8, AI_team, -999, 999)[1] # Depth 8
+	board_list, col, row, AI_team
+	return board_clean(board_place_pawn(board_list, col, row, AI_team))
+
+
 class Board(object):
 	"""
 	0 = empty
@@ -125,7 +151,6 @@ class Board(object):
 		self.player_team = player_team
 		self.AI_team = "white" if player_team=="black" else "black"
 		self.unplayble_round = 0
-		self.player_to_play = player_team == 2
 	
 		self.board_list = [
 			0, 0, 0, 0, 0, 0, 0, 0,
@@ -152,11 +177,13 @@ class Board(object):
 
 		return board_possible_moves(board_list, team)
 
-
-	def get_AI_move(self, board):
-		# should we use this (?): 
-		# https://fr.wikipedia.org/wiki/Algorithme_minimax 
-		pass
+	def get_AI_move(self):
+		# self.update_with_possible_moves
+		# col,row = ai.minimax(board, 8, player_team, -999, 999)[1] # Depth 8
+		# self.clean()
+		# self.place_pawn(col,row)
+		board_list = board_get_AI_move(self.board_list, self.AI_team)
+		return board_list
 
 	def update_with_possible_moves(self):
 		self.board_list = self.possible_moves()
@@ -177,7 +204,9 @@ class Board(object):
 		self.history.append(self.board_list.copy())
 		self.board_list = board_place_pawn(self.board_list, col, row, team)
 		self.clean()
-		# self.board_list = self.get_AI_move(self.board_list) 
+		if self.nb_players == 1:
+			self.board_list = self.get_AI_move() 
+			self.clean()
 		self.update_with_possible_moves()
 		self.is_playable() 
 
@@ -196,6 +225,7 @@ class Board(object):
 				return True
 		self.unplayble_round += 1
 		return False
+
 	def redo(self):
 		if self.history:
 			last_board = self.history.pop()

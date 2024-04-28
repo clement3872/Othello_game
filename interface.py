@@ -6,11 +6,11 @@ import launcher as minter
 import musik as mk
 
 class Interface(Tk):
-	def __init__(self, nb_players):
+	def __init__(self, nb_players,player_team="black"):
 		super().__init__()
 
 		self.width, self.height = 600, 600 # canvas size
-		self.game_board = board.Board(nb_players)
+		self.game_board = board.Board(nb_players,player_team)
 		self.minsize(width=600, height=700)
 		self.maxsize(width=600, height=700)
 
@@ -72,8 +72,6 @@ class Interface(Tk):
 		self.label_display.pack_forget()
 		self.label_display = tk.Label(self, text=self.game_board.player_team)
 		self.label_display.pack()
-		# x, y = x*self.size_x+ self.size_x//2, y*self.size_y+ self.size_y//2
-		# self.canvas.create_oval(x-10, y-10, x+10, y+10, fill="blue")
 
 		self.clear_canvas()
 		self.display_grid()
@@ -154,4 +152,6 @@ class Interface(Tk):
 
 
 if __name__ == "__main__":
-	app = Interface(2)
+	nb_players = 2
+	app = Interface(nb_players)
+	app.mainloop()
