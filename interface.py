@@ -1,7 +1,8 @@
+import pickle
 import tkinter as tk
 from tkinter import *
 from tkinter import messagebox as tkm
-import board
+import board 
 import launcher as minter
 import musik as mk
 
@@ -52,6 +53,15 @@ class Interface(Tk):
         # Button to exit the game
         self.ret = tk.Button(self, text="Quit", command=self.return_main)
         self.ret.pack()
+
+
+        # Button to load the game
+        self.save_button = tk.Button(self, text="Load", command=self.load)
+        self.save_button.pack()  
+
+        # Button to save the game
+        self.save_button = tk.Button(self, text="Save", command=self.save)
+        self.save_button.pack()  
 
         # Option to enable/disable music
         self.check_button_music = tk.BooleanVar(value=(mk.music_player.music_on == False))
@@ -138,11 +148,11 @@ class Interface(Tk):
         """Open a popup if board is full"""
         if self.game_board.is_full():
             if self.b_score > self.w_score:
-                tkm.showinfo("The black wins")
+                tkm.showinfo("Winner", "Blacks won")
             elif self.b_score < self.w_score:
-                tkm.showinfo("The white wins")
+                tkm.showinfo("Winner", "Whites won")
             else:
-                tkm.showinfo("Egalité")
+                tkm.showinfo("Winner", "Draw")
 
     # Cancel the last move
     def undo_move(self):
@@ -165,6 +175,16 @@ class Interface(Tk):
 
         self.score_blk.config(text="Black: " + str(self.player_scores["black"]))
         self.score_wht.config(text="White: " + str(self.player_scores["white"]))
+        
+    def save(self):
+        with open("save", "wb") as f:   
+            pickle.dump(self.game_board.board_list, f)
+
+    def load(self):
+        with open("save", 'rb') as f:
+            self.game_board.board_list = pickle.load(f)
+        self.display_pawns()
+
 
 if __name__ == "__main__":
     nb_players = 1; player_team="white"
