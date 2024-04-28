@@ -1,7 +1,7 @@
 import board
-    # Initialize the board_list
+    # Initialisation de board_list
 
-2# Function to print the board_list
+# Fonction pour afficher board_list
 def print_board_list(board_list):
     for i in range(8):
         t = []
@@ -9,20 +9,20 @@ def print_board_list(board_list):
             t.append(board_list[i*8+j])
     print("####")
 
-# Function to check if a move is witin bounds
+# Fonction pour vérifier si un mouvement est dans les limites du plateau
 def in_bound(x, y):
     return 0 <= x < 8 and 0 <= y < 8
 
-# Function to get all valid moves for a player
+# Fonction pour obtenir tous les mouvements valides pour un joueur
 def get_valid_moves(board_list, player_team):
     valid_moves = []
     for x in range(8):
         for y in range(8):
-            if board_list[board.board_get_pos(x,y)] not in ("black","white",0):
+            if board_list[board.board_get_pos(x,y)] not in ("black", "white", 0):
                 valid_moves.append((x, y))
     return valid_moves
 
-# Function to apply a move to the board_list
+# Fonction pour appliquer un mouvement sur board_list
 def apply_move(board_list, player_team, x, y):
     if player_team == "black":
         AI_team = "white"
@@ -30,7 +30,7 @@ def apply_move(board_list, player_team, x, y):
         AI_team = "black"
     
     board_list[board.board_get_pos(x,y)] = player_team
-    # Flip opponent pieces
+    # Retourner les pièces de l'adversaire
     directions = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
     for dx, dy in directions:
         temp_x, temp_y = x + dx, y + dy
@@ -46,9 +46,9 @@ def apply_move(board_list, player_team, x, y):
                     temp_y -= dy
                     board_list[board.board_get_pos(temp_x,temp_y)] = player_team
 
-# Evaluation function
+# Fonction d'évaluation
 def get_score(board_list, player_team):
-    # Simple evaluation function: Count the difference in number of pieces
+    # Fonction d'évaluation simple : compte la différence du nombre de pièces
     if player_team == "black":
         AI_team = "white"
     else:
@@ -58,7 +58,7 @@ def get_score(board_list, player_team):
     opponent_count = board_list.count(AI_team)
     return player_count - opponent_count
 
-# Minimax with Alpha-Beta Pruning
+# Minimax avec élagage alpha-bêta 
 def minimax(board_list, depth, player_team, alpha, beta):
     if player_team == "black":
         AI_team = "white"
@@ -73,7 +73,7 @@ def minimax(board_list, depth, player_team, alpha, beta):
         return get_score(board_list, player_team), None
     
     best_move = None
-    if player_team == "black":  # Maximizing player
+    if player_team == "black":  # Joueur maximisant
         max_score = -999
         for move in valid_moves:
             new_board_list = [row for row in board_list]
@@ -87,11 +87,11 @@ def minimax(board_list, depth, player_team, alpha, beta):
                 break
         return max_score, best_move
     
-    else:  # Minimizing player
+    else:  # Joueur minimisant
         min_score = 999
         for move in valid_moves:
             new_board_list = [row for row in board_list]
-            apply_move(new_board_list,player_team, *move)
+            apply_move(new_board_list, player_team, *move)
             score, _ = minimax(new_board_list, depth - 1, AI_team, alpha, beta)
             if score < min_score:
                 min_score = score
@@ -101,16 +101,16 @@ def minimax(board_list, depth, player_team, alpha, beta):
                 break
         return min_score, best_move
 
-# Example of how to use the functions
-# Assume "b" starts first
-
+# Exemple d'utilisation des fonctions
+# Supposons que le joueur "black" commence
 if __name__ == "__main__":
+    # Configuration initiale du plateau
     board_list = [
     0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, "white", "black", 0, 0, 0,
-    0, 0, 0, "black", "white",0 , 0, 0,
+    0, 0, 0, "black", "white", 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0
@@ -119,16 +119,20 @@ if __name__ == "__main__":
     AI_team = "white"
 
     while True:
+        # Mise à jour et affichage du plateau avec les coups possibles
         board_list = board.board_possible_moves(board_list, player_team)
         for i in range(8):
             print(board_list[i*8:(i+1)*8])
         print_board_list(board_list)
+        # Si c'est le tour de l'IA
         if player_team == "white":
-            x, y = minimax(board_list, 8, player_team, -999, 999)[1]  # Depth 8
+            x, y = minimax(board_list, 8, player_team, -999, 999)[1]  # Profondeur 8
             apply_move(board_list, player_team, x, y)
         else:
-            print("Enter your move (col then row): ")
-            x,y = int(input()), int(input())
+            # Demander et appliquer le coup du joueur humain
+            print("Entrez votre coup (colonne puis ligne) : ")
+            x, y = int(input()), int(input())
             apply_move(board_list, player_team, x, y)
+        # Nettoyage du plateau et changement de joueur
         board_list = board.board_clean(board_list)
-        player_team, AI_team = AI_team, player_team  # Switch players
+        player_team, AI_team = AI_team, player_team  # Changement de joueur
