@@ -116,6 +116,7 @@ class Inscr(Con_inscr):
                 with open(os.path.join(sys.path[0], "userbase.txt"), "a") as ouvre:
                     ouv = ouvre.writelines([id1, ":",mdp2,"\n" ])
                     ouvre.close()
+                self.supp()
 
 
     def supp(self):
