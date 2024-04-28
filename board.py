@@ -1,16 +1,15 @@
 import ai
-# Note
-# on est oblige de manger un pion lorsque l'on joue (i.e. c'est a l'autre de jouer)
-
 
 def board_get(board_list, col, row):
+	"""Returns the element at some coordinates"""
 	return board_list[row*8 + col]
 
 def board_get_pos(col, row):
+	"""Returns the position in the list for some coordinates"""
 	return row*8 + col
 
 def baord_get_direction_index(col,row, direction):
-	# returns col and row for a certain direction
+	"""Returns col and row for a certain direction"""
 	if direction == "top" and row >= 1:
 		row -= 1
 	elif direction == "bottom" and row <= 6:
@@ -56,23 +55,20 @@ def possible_moves_from(board_list, col, row):
 
 	def moves_rec(col, row, direction, points=0):
 		current_pawn = board_get(board_list, col, row)
-		# to avoid recursion problems
+
+		# stop the recursion
 		if not coords_in_bounds(col, row, direction):
 			return None
-		if direction == "bot": print(current_pawn, col, row, points, opposite_team)
 
+		# pawn of the next position, depends on the direction
 		col,row = baord_get_direction_index(col,row, direction)
-
-		# pawn of the next position, depends of the direction
 		direc_pawn = board_get(board_list, col, row) 
 
+		# if we can place a pawn at the next coordinates
 		if current_pawn==opposite_team and type(direc_pawn)==type(int()):
 			board_list[board_get_pos(col, row)] = points + direc_pawn
 
-		# elif direc_pawn==opposite_team\
-		# 	and ((current_pawn==team and points==0)\
-		# 	or (points>0 and current_pawn==opposite_team)):
-		# 		moves_rec(col, row, direction, points+1)
+		# if we don't know if we can place a pawn at the next coordinates
 		elif direc_pawn==opposite_team:
 			moves_rec(col, row, direction, points+1)
 
@@ -84,12 +80,14 @@ def possible_moves_from(board_list, col, row):
 
 
 def board_possible_moves(board_list, team):
-	"""moves you can do thanks to all pawns"""
-	def fusion(l1, l2):
-		l = []
-		for i in range(len(l1)):
-			l.append(max(l1[i], l2[i]))
-		return l
+	"""moves you can do thanks with every pawns
+	-
+	Returns the board_list, possible moves are as other numbers than 0,
+	these numbers are the points that a certain move grants
+	-
+	team -> type: String
+	baord -> type: None or list
+	"""
 
 	for col in range(8):
 		for row in range(8):
@@ -103,16 +101,21 @@ def coords_out_of_bound_place(col, row):
 	return col<1 or col>6 or row<1 or row>6
 
 def board_place_pawn(board_list, col, row, ally_team):
+	"""
+	Does what is says: place a pawn at the desired coordinates, and turns all pawns needed
+	"""
+
 	opposite_team = "white" if ally_team=="black" else "black"
 
-	# possible_directions = []
 	for direction in ["top","bottom","left","right","top_left","top_right","bottom_left","bottom_right"]:
 		tmp_col, tmp_row = baord_get_direction_index(col,row, direction)
-		# print(tmp_col, tmp_row)
+
+		# checking if we can turn pawns in the direction
 		while board_get(board_list, tmp_col, tmp_row) == opposite_team\
 		and coords_in_bounds(tmp_col, tmp_row, direction):
 			tmp_col, tmp_row = baord_get_direction_index(tmp_col, tmp_row, direction)
-			1
+
+		# turning the pawns if we actually can
 		if board_get(board_list, tmp_col, tmp_row) == ally_team:
 			# possible_directions.append(direction)
 			tmp_col, tmp_row = baord_get_direction_index(col,row, direction)
@@ -120,6 +123,7 @@ def board_place_pawn(board_list, col, row, ally_team):
 				board_list[board_get_pos(tmp_col, tmp_row)] = ally_team
 				board_list[board_get_pos(col,row)] = ally_team
 				tmp_col, tmp_row = baord_get_direction_index(tmp_col, tmp_row, direction)
+
 	return board_list
 
 def board_clean(board_list):
@@ -133,9 +137,25 @@ def board_clean(board_list):
 
 def board_get_AI_move(board_list, AI_team):
 	board_list = board_possible_moves(board_list,AI_team)
-	col,row = ai.minimax(board_list, 8, AI_team, -999, 999)[1] # Depth 8
-	board_list, col, row, AI_team
-	return board_clean(board_place_pawn(board_list, col, row, AI_team))
+	res = ai.minimax(board_list, 8, AI_team, -999, 999)[1] # Depth 8
+	if res == None:
+		# random possible move because of minmax issue at the end of game
+		for i_col in range(8):
+			for i_row in range(8):
+				pawn = board_get(board_list, i_col, i_row)
+				if pawn not in ("white", "black",0):
+					col, row = i_col, i_row 
+					return board_clean(board_place_pawn(board_list, col, row, AI_team))
+		return board_clean(board_list)
+	else:
+		col, row = res
+		return board_clean(board_place_pawn(board_list, col, row, AI_team))
+
+def board_is_full(board_list):
+	for pawn in board_list:
+		if pawn not in ["black", "white"]:
+			return False
+	return True
 
 
 class Board(object):
@@ -162,10 +182,14 @@ class Board(object):
 			0, 0, 0, 0, 0, 0, 0, 0,
 			0, 0, 0, 0, 0, 0, 0, 0
 		]
+
 		self.history = []  # Initialize empty history list
 
 	def possible_moves(self, team="player", board_list=None):
-		"""returns a board_list of the possible moves
+		"""
+		Returns the board_list, possible moves are as other numbers than 0,
+		these numbers are the points that a certain move grants
+		-
 		team -> type: String
 		baord -> type: None or list
 		"""
@@ -178,22 +202,23 @@ class Board(object):
 		return board_possible_moves(board_list, team)
 
 	def get_AI_move(self):
-		# self.update_with_possible_moves
-		# col,row = ai.minimax(board, 8, player_team, -999, 999)[1] # Depth 8
-		# self.clean()
-		# self.place_pawn(col,row)
+		"""Does what is says"""
 		board_list = board_get_AI_move(self.board_list, self.AI_team)
 		return board_list
 
 	def update_with_possible_moves(self):
+		"""Does what is says"""
 		self.board_list = self.possible_moves()
 
 	def clean(self):
+		"""removes everything other than pawns"""
 		self.board_list = board_clean(self.board_list)
 
 	def place_pawn(self, col, row, team=None):
 		""" function shoud be used for the interface.py
 		team in (None, "white", "black"), None = player_team
+		-
+		This function updates the board_list for a certain move
 		"""
 
 		team = self.player_team
@@ -204,10 +229,24 @@ class Board(object):
 		self.history.append(self.board_list.copy())
 		self.board_list = board_place_pawn(self.board_list, col, row, team)
 		self.clean()
-		if self.nb_players == 1:
+		if self.nb_players == 1 and not self.is_full():
 			self.board_list = self.get_AI_move() 
 			self.clean()
 		self.update_with_possible_moves()
+
+		# if player vs AI, AI plays if player can't
+		while not self.is_playable() and not self.is_full() and self.nb_players==1:
+			self.clean()
+			self.board_list = self.get_AI_move() 
+			self.clean()
+			self.update_with_possible_moves()
+
+		# if player vs player, we skip the turn 
+		if self.nb_players == 2 and not self.is_playable():
+			self.player_team,self.AI_team = self.AI_team,self.player_team
+			self.clean()
+			self.update_with_possible_moves()
+
 		self.is_playable() 
 
 	def get(self, col, row):
@@ -234,11 +273,12 @@ class Board(object):
 		else:
 			return False
 		
-	def board_is_full(self):
-		for pawn in self.board_list:
-			if pawn not in ["black", "white"]:
-				return False
-		return True
+	def is_full(self):
+		return board_is_full(self.board_list)
+		# for pawn in self.board_list:
+		# 	if pawn not in ["black", "white"]:
+		# 		return False
+		# return True
 		
 
 # to test
