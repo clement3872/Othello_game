@@ -1,37 +1,37 @@
 import ai
 
 def board_get(board_list, col, row):
-	"""Returns the element at some coordinates"""
-	return board_list[row*8 + col]
+    """Retrieve the element at specified coordinates in the board_list."""
+    return board_list[row*8 + col]
 
 def board_get_pos(col, row):
-	"""Returns the position in the list for some coordinates"""
-	return row*8 + col
+    """Calculate the linear index in the board_list based on column and row coordinates."""
+    return row*8 + col
 
-def baord_get_direction_index(col,row, direction):
-	"""Returns col and row for a certain direction"""
-	if direction == "top" and row >= 1:
-		row -= 1
-	elif direction == "bottom" and row <= 6:
-		row += 1
-	elif direction == "left" and col >= 1:
-		col -= 1
-	elif direction == "right" and col <= 6:
-		col += 1
+def board_get_direction_index(col, row, direction):
+    """Update column and row based on the specified direction."""
+    if direction == "top" and row >= 1:
+        row -= 1
+    elif direction == "bottom" and row <= 6:
+        row += 1
+    elif direction == "left" and col >= 1:
+        col -= 1
+    elif direction == "right" and col <= 6:
+        col += 1
 
-	# diagonals
-	elif direction == "top_left" and row >= 1 and col >= 1:
-		row -= 1; col -= 1
-	elif direction == "top_right" and row >= 1 and col <= 6:
-		row -= 1; col += 1
-	elif direction == "bottom_left" and row <= 6 and col >= 1:
-		row += 1; col -= 1
-	elif direction == "bottom_right" and row <= 6 and col <= 6:
-		row += 1; col += 1
-	return (col, row)
+    # Handling diagonal movements
+    elif direction == "top_left" and row >= 1 and col >= 1:
+        row -= 1; col -= 1
+    elif direction == "top_right" and row >= 1 and col <= 6:
+        row -= 1; col += 1
+    elif direction == "bottom_left" and row <= 6 and col >= 1:
+        row += 1; col -= 1
+    elif direction == "bottom_right" and row <= 6 and col <= 6:
+        row += 1; col += 1
+    return (col, row)
 
 def coords_in_bounds(col, row, direction):
-	"""check if future coordinates are in bounds"""
+	"""Check if the coordinates after a move in the given direction are still within board bounds."""
  
 	if direction == "top": return row >= 1
 	elif direction == "bottom": return row <= 6
@@ -47,13 +47,16 @@ def coords_in_bounds(col, row, direction):
 
 
 def possible_moves_from(board_list, col, row):
-	"""moves you can do thanks to a pawn"""
-	if col<0 or col>7 or row<0 or row>7: return board_list
+	"""Determine all possible moves from a given pawn's position."""
+	if col<0 or col>7 or row<0 or row>7: 
+		return board_list
 	team = board_get(board_list, col, row)
-	if team == 0: return board_list
+	if team == 0: 	# No pawn to move
+		return board_list 
 	opposite_team = "white" if team=="black" else "black"
 
 	def moves_rec(col, row, direction, points=0):
+		"""Recursively find and mark all valid moves."""
 		current_pawn = board_get(board_list, col, row)
 
 		# stop the recursion
@@ -61,7 +64,7 @@ def possible_moves_from(board_list, col, row):
 			return None
 
 		# pawn of the next position, depends on the direction
-		col,row = baord_get_direction_index(col,row, direction)
+		col,row = board_get_direction_index(col,row, direction)
 		direc_pawn = board_get(board_list, col, row) 
 
 		# if we can place a pawn at the next coordinates
@@ -98,6 +101,7 @@ def board_possible_moves(board_list, team):
 	return board_list
 
 def coords_out_of_bound_place(col, row):
+	"""Check if the coordinates are out of playable board boundaries."""
 	return col<1 or col>6 or row<1 or row>6
 
 def board_place_pawn(board_list, col, row, ally_team):
@@ -108,26 +112,26 @@ def board_place_pawn(board_list, col, row, ally_team):
 	opposite_team = "white" if ally_team=="black" else "black"
 
 	for direction in ["top","bottom","left","right","top_left","top_right","bottom_left","bottom_right"]:
-		tmp_col, tmp_row = baord_get_direction_index(col,row, direction)
+		tmp_col, tmp_row = board_get_direction_index(col,row, direction)
 
 		# checking if we can turn pawns in the direction
 		while board_get(board_list, tmp_col, tmp_row) == opposite_team\
 		and coords_in_bounds(tmp_col, tmp_row, direction):
-			tmp_col, tmp_row = baord_get_direction_index(tmp_col, tmp_row, direction)
+			tmp_col, tmp_row = board_get_direction_index(tmp_col, tmp_row, direction)
 
 		# turning the pawns if we actually can
 		if board_get(board_list, tmp_col, tmp_row) == ally_team:
 			# possible_directions.append(direction)
-			tmp_col, tmp_row = baord_get_direction_index(col,row, direction)
+			tmp_col, tmp_row = board_get_direction_index(col,row, direction)
 			while board_get(board_list, tmp_col, tmp_row) == opposite_team:
 				board_list[board_get_pos(tmp_col, tmp_row)] = ally_team
 				board_list[board_get_pos(col,row)] = ally_team
-				tmp_col, tmp_row = baord_get_direction_index(tmp_col, tmp_row, direction)
+				tmp_col, tmp_row = board_get_direction_index(tmp_col, tmp_row, direction)
 
 	return board_list
 
 def board_clean(board_list):
-	"""removes everything other than pawns"""
+	"""Remove all non-pawn elements from the board."""
 	for i in range(len(board_list)):
 		if board_list[i] not in ("white", "black"): 
 			board_list[i] = 0
@@ -136,6 +140,7 @@ def board_clean(board_list):
 
 
 def board_get_AI_move(board_list, AI_team):
+	"""Calculate the best move for AI using the minimax algorithm."""
 	board_list = board_possible_moves(board_list,AI_team)
 	res = ai.minimax(board_list, 8, AI_team, -999, 999)[1] # Depth 8
 	if res == None:
@@ -152,6 +157,7 @@ def board_get_AI_move(board_list, AI_team):
 		return board_clean(board_place_pawn(board_list, col, row, AI_team))
 
 def board_is_full(board_list):
+	"""Check if the board has no empty spaces left."""
 	for pawn in board_list:
 		if pawn not in ["black", "white"]:
 			return False
@@ -207,11 +213,11 @@ class Board(object):
 		return board_list
 
 	def update_with_possible_moves(self):
-		"""Does what is says"""
+		"""Update the board with possible moves highlighted."""
 		self.board_list = self.possible_moves()
 
 	def clean(self):
-		"""removes everything other than pawns"""
+		"""Clean the board, removing highlights and only leaving pawns."""
 		self.board_list = board_clean(self.board_list)
 
 	def place_pawn(self, col, row, team=None):
@@ -250,6 +256,7 @@ class Board(object):
 		self.is_playable() 
 
 	def get(self, col, row):
+		"""Get the element at the specified position on the board."""
 		return board_get(self.board_list, col, row)
 
 	def is_playable(self):
@@ -266,6 +273,7 @@ class Board(object):
 		return False
 
 	def undo(self):
+		"""Undo the last move made by the current player."""
 		if self.history:
 			last_board = self.history.pop()
 			self.board_list = last_board
@@ -274,6 +282,7 @@ class Board(object):
 			return False
 		
 	def is_full(self):
+		"""Check if the board is fully occupied."""
 		return board_is_full(self.board_list)
 		# for pawn in self.board_list:
 		# 	if pawn not in ["black", "white"]:
@@ -288,4 +297,4 @@ if __name__ == '__main__':
 
 	t = board_possible_moves(b.board_list, "black")
 	for i in range(8):
-		print(t[i*8:(i+1)*8])
+		print(t[i*8:(i+1)*8]) # Display each row of the board

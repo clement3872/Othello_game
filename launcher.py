@@ -15,11 +15,13 @@ class Main_Interface(Tk):
 		self.minsize(width=700, height=500)
 		self.maxsize(width=700, height=500)
 
+		# Load images for the background and buttons
 		self.image_main_menu = tk.PhotoImage(file="Ressources/images/main_menu_background.png")
 		self.image_button_p = tk.PhotoImage(file="Ressources/images/button_icon_p_vs_p.png")
 		self.image_button_ai = tk.PhotoImage(file="Ressources/images/button_icon_p_vs_ai.png")
 		self.image_button_rules = tk.PhotoImage(file="Ressources/images/button_icon2_rules.png")
 		
+		# Main canvas setup
 		self.main_canvas = tk.Label(self, width= 700, height=500, image=self.image_main_menu)
 		self.main_canvas.grid()
 		
@@ -48,36 +50,37 @@ class Main_Interface(Tk):
 		self.check_button = tk.Checkbutton(self.main_canvas, text="Mute", variable=self.check_button_var, command=mk.music_player.switch_main)
 		self.check_button.place(x=20, y=450)
 		
+		# Ensures proper exit
 		self.protocol('WM_DELETE_WINDOW', self.exit_func)
 	
+		# Initial setup for color selection interface
 		self.choose_color()
 		self.mainloop()
 
 	
 	def menu_choose_color(self):
-		# Hide the main canvas to show the canvas where you can choose your team
+		"""Hide the main canvas to display the team selection interface."""
 		self.main_canvas.grid_forget()
 		self.canvas_choose.grid()
 
 	def back_main_menu(self):
-		# Return to the main menu
+		"""Return to the main menu."""
 		self.canvas_choose.grid_forget()
 		self.main_canvas.grid()
 
 	def rules(self):
-		# Go to the history
+		"""Navigate to the history or rules frame."""
 		self.main_canvas.grid_forget()
 		self.rules_frame.grid()
 
 
 	def back(self):
-		# Return to the main menu
+		"""Return to the main menu from the rules frame."""
 		self.rules_frame.grid_forget()
 		self.main_canvas.grid()
 	
 	def choose_color(self):
-		# Choose the color 
-		# Note : The blacks begins
+		"""Setup for choosing the team color; default is 'black' starts the game."""
 		self.canvas_choose = tk.Frame(self)
 
 		self.lab_choose = tk.Label(self.canvas_choose, text="Choose your team")
@@ -97,11 +100,13 @@ class Main_Interface(Tk):
 		self.button_back2.grid(row=2, column=0, pady=10)
 
 	def call_game(self, nb_players=2, player_team="black"):
+		"""Initiate a game session."""
 		self.exit_func()
 		mk.music_player.swap_interface()
 		inter.Interface(nb_players, player_team)
 		
 	def exit_func(self):
+		"""Close the music player and the interface."""
 		mk.music_player.destroy()
 		self.destroy()
 

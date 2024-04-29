@@ -5,57 +5,57 @@ import sys
 from launcher import *
 import musik as mk
 
-# Classe pour l'interface de base des connexions et inscriptions
+# Class for the base interface of login and registration
 class Con_inscr(Tk):
     """
-    Classe permettant d'instancier l'interface de connexion.
+    Class for creating the login interface.
     """
     def __init__(self):
         super().__init__()
-        self.title("Connexion")  # Titre de la fenêtre
-        self.geometry('300x300')  # Définit la taille initiale de la fenêtre
+        self.title("Connexion")  # Window title
+        self.geometry('300x300')  # Sets the initial size of the window
         self.minsize(350, 190)  
         self.maxsize(350, 190)  
-        self.eval('tk::PlaceWindow . center')  # Centrer la fenêtre à l'écran
+        self.eval('tk::PlaceWindow . center')  # Center the window on the screen
 
-# Classe pour la connexion utilisant l'interface de base
+# Class for login using the base interface
 class Connexion(Con_inscr):
     """
-    Classe permettant de se connecter en récupérant les identifiants et mots de passe
-    enregistrés dans un fichier txt.
+    Class to log in by retrieving usernames and passwords
+    stored in a txt file.
     """
     def __init__(self):
         Con_inscr.__init__(self)
         
-        # Configuration des widgets
+        # Widgets configuration
         self.mot = Label(self, text="Veuillez-vous connecter").grid(row=0, column=1)
         self.ide = Label(self, text="Identifiant").grid(row=2, column=0)
         self.mdp = Label(self, text="Mot de passe").grid(row=3, column=0)
 
-        # Champs de saisie pour l'identifiant et le mot de passe
+        # Entry fields for username and password
         self.identi = Entry(self)
         self.identi.grid(row=2, column=1)
         self.mdp1 = Entry(self, show='*')
         self.mdp1.grid(row=3, column=1)
     
-        # Boutons pour la connexion et l'inscription
+        # Buttons for login and registration
         conne = ttk.Button(self, text="Connexion", command=self.verif).grid(row=4, column=1)
         insc = ttk.Button(self, text="Inscription", command=self.supp_page).grid(row=5, column=1)
       
     def verif(self):
-        # Récupération des données saisies
+        # Retrieving entered data
         id = self.identi.get()
         mdp1 = self.mdp1.get()
         dico = {}
         with open(os.path.join(sys.path[0], "userbase.txt"), "r") as lire:
             k = lire.readlines()
 
-        # Construction d'un dictionnaire à partir du fichier
+        # Building a dictionary from the file
         for i in k:
             a = i.rstrip("\n").split(":")
             dico[a[0]] = a[-1]
         
-        # Vérification des informations saisies
+        # Checking the entered information
         if id == "" or mdp1 == "":
             Label(self, text="Veuillez écrire dans les champs obligatoires !").place(x=10, y=130)
         else:
@@ -71,50 +71,50 @@ class Connexion(Con_inscr):
 
     def supp_page(self):
         """
-        Méthode pour fermer la fenêtre actuelle et ouvrir une nouvelle pour l'inscription.
+        Method to close the current window and open a new one for registration.
         """
         self.destroy()
         der = Inscr()
         der.mainloop()
         
-# Classe pour l'inscription utilisant l'interface de base
+# Class for registration using the base interface
 class Inscr(Con_inscr):
     """
-    Classe permettant de s'inscrire en enregistrant un nouvel identifiant et mot de passe
-    dans un fichier txt.
+    Class for registering by saving a new username and password
+    in a txt file.
     """
     def __init__(self):
         Con_inscr.__init__(self)
 
-        # Configuration des widgets
+        # Widgets configuration
         self.a = Label(self, text="Veuillez-vous inscrire").grid(row=0, column=1)
         self.ide = Label(self, text="Identifiant").grid(row=2, column=0)
         self.mdp = Label(self, text="Mot de passe").grid(row=3, column=0)
 
-        # Champs de saisie pour l'identifiant et le mot de passe
+        # Entry fields for username and password
         self.ide1 = Entry(self)
         self.ide1.grid(row=2, column=1)
         self.mdp2 = Entry(self, show='*')
         self.mdp2.grid(row=3, column=1)
         
-        # Boutons pour l'inscription et le retour à la connexion
+        # Buttons for registration and return to login
         insc = ttk.Button(self, text="S'inscrire", command=self.fichier).grid(row=4, column=1)
         conne = ttk.Button(self, text="Retour connexion", command=self.supp).grid(row=5, column=1)
     
     def fichier(self):
-        # Récupération des données saisies
+        # Retrieving entered data
         id1 = self.ide1.get()
         mdp2 = self.mdp2.get()
         dicoff = {}
         with open(os.path.join(sys.path[0], "userbase.txt"), "r") as lire:
             k = lire.readlines()
 
-        # Construction d'un dictionnaire à partir du fichier
+        # Building a dictionary from the file
         for i in k:
             a = i.rstrip("\n").split(":")
             dicoff[a[0]] = a[-1]
         
-        # Vérification et enregistrement des nouvelles données
+        # Checking and recording the new data
         if id1 in dicoff.keys():
             Label(self, text="Cet identifiant existe déjà. Veuillez-en choisir un autre.").place(x=10, y=130)
         else:
@@ -127,7 +127,7 @@ class Inscr(Con_inscr):
 
     def supp(self):
         """
-        Méthode pour fermer la fenêtre actuelle et ouvrir une nouvelle pour la connexion.
+        Method to close the current window and open a new one for login.
         """
         self.destroy()
         av = Connexion()

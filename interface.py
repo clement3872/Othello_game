@@ -11,33 +11,33 @@ class Interface(Tk):
     def __init__(self, nb_players, player_team="black"):
         super().__init__()
 
-        self.game_board = board.Board(nb_players,player_team)
-        if nb_players==1 and player_team=="white":
+        self.game_board = board.Board(nb_players, player_team)
+        if nb_players == 1 and player_team == "white":
             self.game_board.board_list = self.game_board.get_AI_move()
         self.b_score = self.game_board.board_list.count("black")
         self.w_score = self.game_board.board_list.count("white")
 
-        self.width, self.height = 600, 600 # canvas size
+        self.width, self.height = 600, 600 # Canvas size
         self.minsize(width=600, height=700)
         self.maxsize(width=600, height=700)
 
         # Calculating the size of each square on the board
         self.size_x = self.width // 8
         self.size_y = self.height // 8
-        # Initializing Player Scores
+        # Initializing player scores
         self.player_scores = {"black": 2, "white": 2}
 
-        # Configuration du titre de la fenêtre
+        # Setting the window title
         self.title("Plateau de l'Othello")
 
         # Creation of the canvas for the game
         self.canvas = tk.Canvas(self, width=self.width, height=self.height, bg="#21854d")
         self.canvas.pack()
 
-        # Bind left click
+        # Binding left mouse click
         self.canvas.bind("<Button-1>", self.on_click)
         
-        # A button to cancel the last move played
+        # A button to undo the last move
         self.undo_button = tk.Button(self, text="Undo", command=self.undo_move)
         self.undo_button.pack(side=tk.LEFT)
 
@@ -45,7 +45,7 @@ class Interface(Tk):
         self.label_display = tk.Label(self, text=self.game_board.player_team)
         self.protocol('WM_DELETE_WINDOW', self.return_main)
 
-        # Updating and initial display of the board
+        # Updating and displaying the initial board setup
         self.game_board.update_with_possible_moves()
         self.display_grid()
         self.display_pawns()
@@ -54,14 +54,13 @@ class Interface(Tk):
         self.ret = tk.Button(self, text="Quit", command=self.return_main)
         self.ret.pack()
 
-
         # Button to load the game
-        self.save_button = tk.Button(self, text="Load", command=self.load)
-        self.save_button.pack()  
+        self.load_button = tk.Button(self, text="Load", command=self.load)
+        self.load_button.pack()
 
         # Button to save the game
         self.save_button = tk.Button(self, text="Save", command=self.save)
-        self.save_button.pack()  
+        self.save_button.pack()
 
         # Option to enable/disable music
         self.check_button_music = tk.BooleanVar(value=(mk.music_player.music_on == False))
@@ -75,16 +74,15 @@ class Interface(Tk):
         self.score_wht.pack(side=tk.LEFT)
 
     def return_main(self):
-        """Method called when closing the window"""
+        """Handles the event when the window is closed"""
         self.destroy()
         mk.music_player.swap_interface()
         minter.Main_Interface()
 
     def on_click(self, event):
-        """Handling click events on the canvas"""
+        """Handles click events on the canvas"""
         x, y = event.x // self.size_x, event.y // self.size_y
         if self.game_board.get(x, y) == 0 or self.game_board.get(x, y) in ("white", "black"):
-            # print("You cannot play this move")
             self.label_display.pack_forget()
             self.label_display = tk.Label(self, text="you cannot play here")
             self.label_display.pack()
@@ -102,11 +100,10 @@ class Interface(Tk):
         self.update_score()
 
     def clear_canvas(self):
-        """Removes everyhing on the canvas"""
+        """Removes everything on the canvas"""
         self.canvas.delete("all")
         self.display_grid()
 
-    # Affichage des pions sur le canvas
     def display_pawns(self):
         """Display pawns on the canvas"""
         # "radius" for the pawns
@@ -128,7 +125,7 @@ class Interface(Tk):
                         self.size_y * j + pawn_size_y + half_box_y,
                         fill=color, outline=color)
                 elif pawn > 0:
-                    # possible moves marker
+                    # Marker for possible moves
                     self.canvas.create_oval(
                         self.size_x * i - pawn_size_x // 2 + half_box_x,
                         self.size_y * j - pawn_size_y // 2 + half_box_y,
@@ -137,7 +134,7 @@ class Interface(Tk):
                         fill="gray", outline="orange")
 
     def display_grid(self):
-        """Display the grid on the canvas (lines)"""
+        """Draws the lines of the grid on the canvas"""
         for i in range(1, 8):
             tmp_x = self.size_x * i
             tmp_y = self.size_y * i
@@ -145,7 +142,7 @@ class Interface(Tk):
             self.canvas.create_line(0, tmp_y, self.width, tmp_y, width=3)
 
     def check_board_is_full(self):
-        """Open a popup if board is full"""
+        """Checks if the board is full and displays the winner"""
         if self.game_board.is_full():
             if self.b_score > self.w_score:
                 tkm.showinfo("Winner", "Blacks won")
@@ -154,8 +151,9 @@ class Interface(Tk):
             else:
                 tkm.showinfo("Winner", "Draw")
 
-    # Cancel the last move
+
     def undo_move(self):
+        """Undo the last move if possible"""
         if self.game_board.undo():
             self.clear_canvas()
             self.display_pawns()
@@ -177,10 +175,12 @@ class Interface(Tk):
         self.score_wht.config(text="White: " + str(self.player_scores["white"]))
         
     def save(self):
+        """Saves the current game state to a file"""
         with open("save", "wb") as f:   
             pickle.dump(self.game_board.board_list, f)
 
     def load(self):
+        """Loads the game state from a file"""
         with open("save", 'rb') as f:
             self.game_board.board_list = pickle.load(f)
         self.display_pawns()
