@@ -1,6 +1,5 @@
 import tkinter as tk
 from tkinter import *
-from datetime import datetime
 import interface as inter
 import musik as mk
 import os

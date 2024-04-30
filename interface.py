@@ -1,6 +1,7 @@
 import tkinter as tk
 import os
 import sys
+from datetime import datetime
 from tkinter import *
 from tkinter import messagebox as tkm
 import board 
@@ -148,62 +149,47 @@ class Interface(Tk):
 
     def check_board_is_full(self):
         """Checks if the board is full, displays the winner and write the score in a file for the history"""
-        """
-        if self.game_board.is_full():
-            if nb_players == 2 a:
-                if self.b_score > self.w_score:
-                    with open(os.path.join(sys.path[0], "history_game", self.user + ".txt"), "a") as histo:
-                        histo.write("Les noirs ont gagnés avec {0} points contre {1} pour les blancs.\n".format(self.b_score, self.w_score))
-                    tkm.showinfo("Winner", "Blacks won")
-                elif self.b_score < self.w_score:
-                    with open(os.path.join(sys.path[0], "history_game", self.user + ".txt"), "a") as histo:
-                        histo.write("Les blancs ont gagnés avec {0} points contre {1} pour les noirs.\n".format(self.w_score, self.b_score))
-                    tkm.showinfo("Winner", "Whites won")
-                else:
-                    with open(os.path.join(sys.path[0], "history_game", self.user + ".txt"), "a") as histo:
-                        histo.write("Egalité : les blancs {0} points et {1} pour les noirs.\n".format(self.w_score, self.b_score))
-                    tkm.showinfo("Winner", "Draw")
-        """
+        current_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         if self.game_board.is_full():
             if self.nb_pl == 1:
                 if self.nb_pl_t == "white":
                     if self.b_score > self.w_score:
                         with open(os.path.join(sys.path[0], "history_game", self.user + ".txt"), "a") as histo:
-                            histo.write("Vous avez perdu contre l'IA avec {0} points contre {1} pour vous.\n".format(self.b_score, self.w_score))
+                            histo.write(current_datetime + "You lost against the AI with {0} points against {1} for you.\n".format(self.b_score, self.w_score))
                         tkm.showinfo("Winner", "You Lost! AI won")
                     elif self.b_score < self.w_score:
                         with open(os.path.join(sys.path[0], "history_game", self.user + ".txt"), "a") as histo:
-                            histo.write("Vous avez gagné contre l'IA avec {0} points contre {1} pour vous.\n".format(self.b_score, self.w_score))
-                        tkm.showinfo("Winner", "Congratulations! You Won! Whites won")
+                            histo.write(current_datetime + "You won against the AI with {0} points against {1} for you.\n".format(self.b_score, self.w_score))
+                        tkm.showinfo("Winner", "Congratulations! You Won!")
                     else:
                         with open(os.path.join(sys.path[0], "history_game", self.user + ".txt"), "a") as histo:
-                            histo.write("Egalité : vous avez fait match nul contre l'IA avec {0} points et {1} pour vous.\n".format(self.b_score, self.w_score))
+                            histo.write(current_datetime + "Draw : You tied against the AI with {0} points and {1} for you.\n".format(self.b_score, self.w_score))
                         tkm.showinfo("Winner", "It's a Draw!")
                 elif self.nb_pl_t == "black":
                     if self.b_score > self.w_score:
                         with open(os.path.join(sys.path[0], "history_game", self.user + ".txt"), "a") as histo:
-                            histo.write("Vous avez gagné contre l'IA avec {0} points contre {1} pour vous.\n".format(self.w_score, self.b_score))
-                        tkm.showinfo("Winner", "Congratulations! You Won! Blacks won")
+                            histo.write(current_datetime + "You won against the AI with {0} points against {1} for you.\n".format(self.w_score, self.b_score))
+                        tkm.showinfo("Winner", "Congratulations! You Won!")
                     elif self.b_score < self.w_score:
                         with open(os.path.join(sys.path[0], "history_game", self.user + ".txt"), "a") as histo:
-                            histo.write("Vous avez perdu contre l'IA avec {0} points contre {1} pour vous.\n".format(self.w_score, self.b_score))
-                        tkm.showinfo("Winner", "You Lost! Whites won")
+                            histo.write(current_datetime + "You lost against the AI with {0} points against {1} for you.\n".format(self.w_score, self.b_score))
+                        tkm.showinfo("Winner", "You Lost! AI won")
                     else:
                         with open(os.path.join(sys.path[0], "history_game", self.user + ".txt"), "a") as histo:
-                            histo.write("Egalité : vous avez fait match nul contre l'IA avec {0} points et {1} pour vous.\n".format(self.w_score, self.b_score))
+                            histo.write(current_datetime + "Draw: you tied against the AI with {0} points and {1} for you.\n".format(self.w_score, self.b_score))
                         tkm.showinfo("Winner", "It's a Draw!")
             else:
                 if self.b_score > self.w_score:
                     with open(os.path.join(sys.path[0], "history_game", self.user + ".txt"), "a") as histo:
-                        histo.write("Les noirs ont gagnés avec {0} points contre {1} pour les blancs.\n".format(self.b_score, self.w_score))
+                        histo.write(current_datetime + "The black team won with {0} points against {1} for the white team.\n".format(self.b_score, self.w_score))
                     tkm.showinfo("Winner", "Blacks won")
                 elif self.b_score < self.w_score:
                     with open(os.path.join(sys.path[0], "history_game", self.user + ".txt"), "a") as histo:
-                        histo.write("Les blancs ont gagnés avec {0} points contre {1} pour les noirs.\n".format(self.w_score, self.b_score))
+                        histo.write(current_datetime + "The white team won with {0} points against {1} for the black team.\n".format(self.w_score, self.b_score))
                     tkm.showinfo("Winner", "Whites won")
                 else:
                     with open(os.path.join(sys.path[0], "history_game", self.user + ".txt"), "a") as histo:
-                        histo.write("Egalité : les blancs {0} points et {1} pour les noirs.\n".format(self.w_score, self.b_score))
+                        histo.write(current_datetime + "Draw: whites {0} points and {1} for blacks.\n".format(self.w_score, self.b_score))
                     tkm.showinfo("Winner", "Draw")
 
 
