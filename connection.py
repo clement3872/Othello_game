@@ -28,9 +28,9 @@ class Connexion(Con_inscr):
         Con_inscr.__init__(self)
         
         # Widgets configuration
-        self.mot = Label(self, text="Please log in").grid(row=0, column=1)
-        self.ide = Label(self, text="Username").grid(row=2, column=0)
-        self.mdp = Label(self, text="Password").grid(row=3, column=0)
+        self.mot = Label(self, text="Please log in", font=('Arial', 14)).grid(row=0, columnspan=2, pady=(10, 5))
+        self.ide = Label(self, text="Username").grid(row=1, column=0, sticky='e', padx=10)
+        self.mdp = Label(self, text="Password").grid(row=2, column=0, sticky='e', padx=10)
 
         # Entry fields for username and password
         self.identi = Entry(self)
@@ -61,19 +61,21 @@ class Connexion(Con_inscr):
             
             # Check if the mandatory fields are filled
             if id == "" or mdp1 == "":
-                Label(self, text="Please fill in the required fields!").place(x =10, y = 130)  
+                messagebox.showerror("Error","Please fill in the required fields!")
             
             # Check if the username exists in the dictionary
             else :
                 if id in dico.keys():
-                    if dico[id] != mdp1 :
-                        Label(self, text="Your password or username is incorrect.").place(x =10, y = 130) 
+                    if dico[id] != mdp1:
+                        messagebox.showerror("Error","Your password or username is incorrect.")
+
+                    # Check if the username exists in the dictionary
                     else:
                         self.destroy()
                         mk.music_player.start_music()
                         a = Main_Interface(id)
                 else:   
-                    Label(self, text="Check if your username is correct, otherwise please sign up.").place(x =10, y = 130) 
+                    messagebox.showerror("Error","Check if your username is correct, otherwise please sign up.") 
 
     def supp_page(self):
         """
@@ -93,9 +95,9 @@ class Inscr(Con_inscr):
         Con_inscr.__init__(self)
 
         # Widgets configuration
-        self.a = Label(self, text="Please sign up").grid(row=0, column=1)
-        self.ide = Label(self, text="Username").grid(row=2, column=0)
-        self.mdp = Label(self, text="Password").grid(row=3, column=0)
+        self.a = Label(self, text="Please sign up", font=('Arial', 14)).grid(row=0, columnspan=2, pady=(10, 5))
+        self.ide = Label(self, text="Username").grid(row=1, column=0, sticky='e', padx=10)
+        self.mdp = Label(self, text="Password").grid(row=2, column=0, sticky='e', padx=10)
 
         # Entry fields for username and password
         self.ide1 = Entry(self)
@@ -120,22 +122,26 @@ class Inscr(Con_inscr):
             for i in lire.readlines():
                 a = i.rstrip("\n").split(":")
                 dicoff[a[0]] = a[-1]
-        if id1 in dicoff.keys():
-            Label(self, text="This username already exists. Please choose another one.").place(x =10, y = 130)  
- 
-                    
+    
+        # Check if the provided username already exists in the database
+        if id1 in dicoff:
+            messagebox.showerror("Error","This username already exists. Please choose another one.")
         else:
             # If the username is new, verify that both username and password fields are filled
             if id1 == "" or mdp2 == "":
-                Label(self, text="Please fill in the required fields!").place(x =10, y = 130)        
-            else :
-                dico = {}
-                fichiers = open(os.path.join(sys.path[0], "saves", id1 + ".txt"), "w")
-                hist = open(os.path.join(sys.path[0], "history_game", id1 + ".txt"), "a")
+                messagebox.showerror("Error","Please fill in the required fields!")
+            else:
+                # If all conditions are met, create a new user entry in the database file
+                # Open the userbase.txt file in append mode to add the new user entry
                 with open(os.path.join(sys.path[0], "userbase.txt"), "a") as ouvre:
                     ouv = ouvre.writelines([id1, ":", mdp2, "\n"])
                     ouvre.close()
-                
+            
+                # Display a success message to indicate successful registration
+                messagebox.showinfo("Success", "registration successful, please login !")
+                # close the registration page and redirect to the connexion page
+                self.supp()
+
 
     def supp(self):
         """
