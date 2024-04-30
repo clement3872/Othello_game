@@ -44,10 +44,10 @@ class Main_Interface(Tk):
 			rules_text = f.read()
 
         # Define desired text style options
-		font_style = ("Arial", 14)  # Font family and size
+		font_style = ("Arial", 8)  # Font family and size
 		text_color = "black"  # Text color
 		background_color = "lightgray"  # Label background color (optional)
-		line_spacing = 1.5  # Line spacing between text lines
+		line_spacing = 1  # Line spacing between text lines
 
 		self.lab = tk.Label(self.rules_frame, text=rules_text, justify="left",
                            font=font_style, fg=text_color, bg=background_color,  # Apply styles
