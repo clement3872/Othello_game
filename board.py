@@ -170,6 +170,8 @@ class Board(object):
 	"white" = white pawn
 	"black" = black pawn
 	n = points for a certain move
+	nb_player = 1 for AI
+	nb_player = 2 for p vs p
 	"""
 
 	def __init__(self, nb_players=1, player_team="black"):

@@ -28,9 +28,9 @@ class Connexion(Con_inscr):
         Con_inscr.__init__(self)
         
         # Widgets configuration
-        self.mot = Label(self, text="Veuillez-vous connecter").grid(row=0, column=1)
-        self.ide = Label(self, text="Identifiant").grid(row=2, column=0)
-        self.mdp = Label(self, text="Mot de passe").grid(row=3, column=0)
+        self.mot = Label(self, text="Please log in").grid(row=0, column=1)
+        self.ide = Label(self, text="Username").grid(row=2, column=0)
+        self.mdp = Label(self, text="Password").grid(row=3, column=0)
 
         # Entry fields for username and password
         self.identi = Entry(self)
@@ -39,8 +39,8 @@ class Connexion(Con_inscr):
         self.mdp1.grid(row=3, column=1)
     
         # Buttons for login and registration
-        conne = ttk.Button(self, text="Connexion", command=self.verif).grid(row=4, column=1)
-        insc = ttk.Button(self, text="Inscription", command=self.supp_page).grid(row=5, column=1)
+        conne = ttk.Button(self, text="Log in", command=self.verif).grid(row=4, column=1)
+        insc = ttk.Button(self, text="Sign up", command=self.supp_page).grid(row=5, column=1)
 
     def verif(self):
         id = self.identi.get()
@@ -55,18 +55,18 @@ class Connexion(Con_inscr):
                 dico[a[0]] = a[-1]
             
             if id == "" or mdp1 == "":
-                Label(self, text="Veuillez écrire dans les champs obligatoires !").place(x =10, y = 130)  
+                Label(self, text="Please fill in the required fields!").place(x =10, y = 130)  
             
             else :
                 if id in dico.keys():
                     if dico[id] != mdp1 :
-                        Label(self, text="Votre mot de passe ou identifiant est faux.").place(x =10, y = 130) 
+                        Label(self, text="Your password or username is incorrect.").place(x =10, y = 130) 
                     else:
                         self.destroy()
                         mk.music_player.start_music()
                         a = Main_Interface(id)
                 else:   
-                    Label(self, text="Vérifier si votre identifiant est bon, sinon veuillez-vous inscrire.").place(x =10, y = 130) 
+                    Label(self, text="Check if your username is correct, otherwise please sign up.").place(x =10, y = 130) 
 
     def supp_page(self):
         """
@@ -86,9 +86,9 @@ class Inscr(Con_inscr):
         Con_inscr.__init__(self)
 
         # Widgets configuration
-        self.a = Label(self, text="Veuillez-vous inscrire").grid(row=0, column=1)
-        self.ide = Label(self, text="Identifiant").grid(row=2, column=0)
-        self.mdp = Label(self, text="Mot de passe").grid(row=3, column=0)
+        self.a = Label(self, text="Please sign up").grid(row=0, column=1)
+        self.ide = Label(self, text="Username").grid(row=2, column=0)
+        self.mdp = Label(self, text="Password").grid(row=3, column=0)
 
         # Entry fields for username and password
         self.ide1 = Entry(self)
@@ -97,8 +97,8 @@ class Inscr(Con_inscr):
         self.mdp2.grid(row=3, column=1)
         
         # Buttons for registration and return to login
-        insc = ttk.Button(self, text="S'inscrire", command=self.fichier).grid(row=4, column=1)
-        conne = ttk.Button(self, text="Retour connexion", command=self.supp).grid(row=5, column=1)
+        insc = ttk.Button(self, text="Sign up", command=self.fichier).grid(row=4, column=1)
+        conne = ttk.Button(self, text="Back to login", command=self.supp).grid(row=5, column=1)
     
     def fichier(self):
         id1 = self.ide1.get()
@@ -111,18 +111,20 @@ class Inscr(Con_inscr):
                 a = i.rstrip("\n").split(":")
                 dicoff[a[0]] = a[-1]
         if id1 in dicoff.keys():
-            Label(self, text="Cet identifiant existe déjà. Veuillez-en choisir un autre.").place(x =10, y = 130)  
+            Label(self, text="This username already exists. Please choose another one.").place(x =10, y = 130)  
  
                     
         else:
             if id1 == "" or mdp2 == "":
-                Label(self, text="Veuillez écrire dans les champs obligatoires !").place(x =10, y = 130)        
+                Label(self, text="Please fill in the required fields!").place(x =10, y = 130)        
             else :
                 dico = {}
                 fichiers = open(os.path.join(sys.path[0], "saves", id1 + ".txt"), "w")
+                hist = open(os.path.join(sys.path[0], "history_game", id1 + ".txt"), "a")
                 with open(os.path.join(sys.path[0], "userbase.txt"), "a") as ouvre:
                     ouv = ouvre.writelines([id1, ":",mdp2,"\n" ])
                     ouvre.close()
+                
 
     def supp(self):
         """
