@@ -1,0 +1,27 @@
+But du jeu:
+
+Le but du jeu de Othello est d'avoir plus de pions de sa couleur que son adversaire a la fin de la partie.
+
+Debut de la partie:
+
+Placez le plateau de jeu entre les deux joueurs.
+Chaque joueur choisit une couleur (noir ou blanc).
+
+Othello commence : 
+Le joueur noir joue le premier coup.
+
+Tour de jeu:
+Le joueur actif doit poser un pion de sa couleur sur une case vide du plateau.
+Le pion pose doit respecter deux conditions :
+Adjacence: Le pion pose doit etre adjacent a au moins un pion adverse (horizontalement, verticalement ou diagonalement).
+Encadrement: Le pion pose doit encadrer une ou plusieurs lignes de pions adverses entre le pion pose et un pion de sa couleur deja present sur le plateau.
+Lorsque le pion est pose, les pions adverses encadres sont retournes et deviennent de la couleur du joueur qui a pose le pion.
+Un pion peut retourner plusieurs pions en une seule fois, dans toutes les directions.
+Passage de tour:
+Si un joueur ne peut poser aucun pion legalement, il doit passer son tour.
+Le tour de jeu passe ensuite a l'autre joueur.
+Fin de la partie:
+La partie prend fin lorsque le plateau est plein ou qu'aucun des deux joueurs ne peut plus jouer de coup legal.
+Determination du vainqueur:
+On compte alors le nombre de pions de chaque couleur sur le plateau.
+Le joueur qui a le plus de pions de sa couleur est le vainqueur.

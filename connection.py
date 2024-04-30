@@ -1,5 +1,5 @@
 from tkinter import *
-from tkinter import ttk
+from tkinter import ttk, messagebox
 import os
 import sys
 from launcher import *
@@ -34,19 +34,24 @@ class Connexion(Con_inscr):
 
         # Entry fields for username and password
         self.identi = Entry(self)
-        self.identi.grid(row=2, column=1)
+        self.identi.grid(row=1, column=1, padx=10)
         self.mdp1 = Entry(self, show='*')
-        self.mdp1.grid(row=3, column=1)
+        self.mdp1.grid(row=2, column=1, padx=10)
     
         # Buttons for login and registration
         conne = ttk.Button(self, text="Log in", command=self.verif).grid(row=4, column=1)
         insc = ttk.Button(self, text="Sign up", command=self.supp_page).grid(row=5, column=1)
 
+    
     def verif(self):
+        """handle user registration and login verification in a tkinter application."""
+        # Retrieve the username and password from the input fields
         id = self.identi.get()
         mdp1 = self.mdp1.get()
 
+        # Initialize a dictionary to store data from userbase.txt
         dico = {}
+        # Read userbase.txt file to load existing data into the dictionary
         with open(os.path.join(sys.path[0], "userbase.txt"), "r") as lire:
             k = lire.readlines()
 
@@ -54,9 +59,11 @@ class Connexion(Con_inscr):
                 a = i.rstrip("\n").split(":")
                 dico[a[0]] = a[-1]
             
+            # Check if the mandatory fields are filled
             if id == "" or mdp1 == "":
                 Label(self, text="Please fill in the required fields!").place(x =10, y = 130)  
             
+            # Check if the username exists in the dictionary
             else :
                 if id in dico.keys():
                     if dico[id] != mdp1 :
@@ -92,22 +99,25 @@ class Inscr(Con_inscr):
 
         # Entry fields for username and password
         self.ide1 = Entry(self)
-        self.ide1.grid(row=2, column=1)
+        self.ide1.grid(row=1, column=1, padx=10)
         self.mdp2 = Entry(self, show='*')
-        self.mdp2.grid(row=3, column=1)
+        self.mdp2.grid(row=2, column=1, padx=10)
         
         # Buttons for registration and return to login
         insc = ttk.Button(self, text="Sign up", command=self.fichier).grid(row=4, column=1)
         conne = ttk.Button(self, text="Back to login", command=self.supp).grid(row=5, column=1)
     
     def fichier(self):
+        # Retrieve the username and password from the input fields
         id1 = self.ide1.get()
         mdp2 = self.mdp2.get()
+    
+        # Initialize an empty dictionary to store existing user data
         dicoff = {}
+    
+        # Read the userbase.txt file to load existing user data into the dictionary
         with open(os.path.join(sys.path[0], "userbase.txt"), "r") as lire:
-            k = lire.readlines()
-
-            for i in k:
+            for i in lire.readlines():
                 a = i.rstrip("\n").split(":")
                 dicoff[a[0]] = a[-1]
         if id1 in dicoff.keys():
@@ -115,6 +125,7 @@ class Inscr(Con_inscr):
  
                     
         else:
+            # If the username is new, verify that both username and password fields are filled
             if id1 == "" or mdp2 == "":
                 Label(self, text="Please fill in the required fields!").place(x =10, y = 130)        
             else :
@@ -122,7 +133,7 @@ class Inscr(Con_inscr):
                 fichiers = open(os.path.join(sys.path[0], "saves", id1 + ".txt"), "w")
                 hist = open(os.path.join(sys.path[0], "history_game", id1 + ".txt"), "a")
                 with open(os.path.join(sys.path[0], "userbase.txt"), "a") as ouvre:
-                    ouv = ouvre.writelines([id1, ":",mdp2,"\n" ])
+                    ouv = ouvre.writelines([id1, ":", mdp2, "\n"])
                     ouvre.close()
                 
 
