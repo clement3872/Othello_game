@@ -40,7 +40,19 @@ class Main_Interface(Tk):
 
 		# Creating a new above the main canvas
 		self.rules_frame = tk.Frame(self)
-		self.lab = tk.Label(self.rules_frame, text="Ok")
+		with open("rules.txt", "r") as f:
+			rules_text = f.read()
+
+        # Define desired text style options
+		font_style = ("Arial", 14)  # Font family and size
+		text_color = "black"  # Text color
+		background_color = "lightgray"  # Label background color (optional)
+		line_spacing = 1.5  # Line spacing between text lines
+
+		self.lab = tk.Label(self.rules_frame, text=rules_text, justify="left",
+                           font=font_style, fg=text_color, bg=background_color,  # Apply styles
+                           padx=10, pady=10,  # Add padding for better readability
+                           wraplength=600)  # Wrap text within the label (adjust width as needed)
 		self.lab.grid()
 		self.button_back = tk.Button(self.rules_frame, text="Page précédente", command=self.back)
 		self.button_back.grid(row=2, column=0)
