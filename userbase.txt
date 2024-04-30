@@ -2,3 +2,15 @@ hello:d'accord
 hello1:oui
 i:i
 iu:iu
+c:c
+y:y
+d:d
+w:w
+cx:cx
+lk:lk
+jr:jr
+np:np
+bv:bv
+xw:xw
+kl:kl
+bc:bc
