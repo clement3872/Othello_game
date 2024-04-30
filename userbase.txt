@@ -1,4 +1,4 @@
 hello:d'accord
 hello1:oui
 i:i
-pates:pates
+iu:iu

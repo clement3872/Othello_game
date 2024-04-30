@@ -41,33 +41,32 @@ class Connexion(Con_inscr):
         # Buttons for login and registration
         conne = ttk.Button(self, text="Connexion", command=self.verif).grid(row=4, column=1)
         insc = ttk.Button(self, text="Inscription", command=self.supp_page).grid(row=5, column=1)
-      
+
     def verif(self):
-        # Retrieving entered data
         id = self.identi.get()
         mdp1 = self.mdp1.get()
+
         dico = {}
         with open(os.path.join(sys.path[0], "userbase.txt"), "r") as lire:
             k = lire.readlines()
 
-        # Building a dictionary from the file
-        for i in k:
-            a = i.rstrip("\n").split(":")
-            dico[a[0]] = a[-1]
-        
-        # Checking the entered information
-        if id == "" or mdp1 == "":
-            Label(self, text="Veuillez écrire dans les champs obligatoires !").place(x=10, y=130)
-        else:
-            if id in dico.keys():
-                if dico[id] != mdp1:
-                    Label(self, text="Votre mot de passe ou identifiant est faux.").place(x=10, y=130)
-                else:
-                    self.destroy()
-                    mk.music_player.start_music()
-                    a = Main_Interface(id)
-            else:
-                Label(self, text="Vérifier si votre identifiant est bon, sinon veuillez-vous inscrire.").place(x=10, y=130)
+            for i in k:
+                a = i.rstrip("\n").split(":")
+                dico[a[0]] = a[-1]
+            
+            if id == "" or mdp1 == "":
+                Label(self, text="Veuillez écrire dans les champs obligatoires !").place(x =10, y = 130)  
+            
+            else :
+                if id in dico.keys():
+                    if dico[id] != mdp1 :
+                        Label(self, text="Votre mot de passe ou identifiant est faux.").place(x =10, y = 130) 
+                    else:
+                        self.destroy()
+                        mk.music_player.start_music()
+                        a = Main_Interface(id)
+                else:   
+                    Label(self, text="Vérifier si votre identifiant est bon, sinon veuillez-vous inscrire.").place(x =10, y = 130) 
 
     def supp_page(self):
         """
@@ -102,28 +101,28 @@ class Inscr(Con_inscr):
         conne = ttk.Button(self, text="Retour connexion", command=self.supp).grid(row=5, column=1)
     
     def fichier(self):
-        # Retrieving entered data
         id1 = self.ide1.get()
         mdp2 = self.mdp2.get()
         dicoff = {}
         with open(os.path.join(sys.path[0], "userbase.txt"), "r") as lire:
             k = lire.readlines()
 
-        # Building a dictionary from the file
-        for i in k:
-            a = i.rstrip("\n").split(":")
-            dicoff[a[0]] = a[-1]
-        
-        # Checking and recording the new data
+            for i in k:
+                a = i.rstrip("\n").split(":")
+                dicoff[a[0]] = a[-1]
         if id1 in dicoff.keys():
-            Label(self, text="Cet identifiant existe déjà. Veuillez-en choisir un autre.").place(x=10, y=130)
+            Label(self, text="Cet identifiant existe déjà. Veuillez-en choisir un autre.").place(x =10, y = 130)  
+ 
+                    
         else:
             if id1 == "" or mdp2 == "":
-                Label(self, text="Veuillez écrire dans les champs obligatoires !").place(x=10, y=130)
-            else:
+                Label(self, text="Veuillez écrire dans les champs obligatoires !").place(x =10, y = 130)        
+            else :
+                dico = {}
+                fichiers = open(os.path.join(sys.path[0], "saves", id1 + ".txt"), "w")
                 with open(os.path.join(sys.path[0], "userbase.txt"), "a") as ouvre:
-                    ouvre.writelines([id1, ":", mdp2, "\n"])
-                self.supp()
+                    ouv = ouvre.writelines([id1, ":",mdp2,"\n" ])
+                    ouvre.close()
 
     def supp(self):
         """

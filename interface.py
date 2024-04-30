@@ -1,5 +1,6 @@
-import pickle
 import tkinter as tk
+import os
+import sys
 from tkinter import *
 from tkinter import messagebox as tkm
 import board 
@@ -8,9 +9,10 @@ import musik as mk
 
 # Definition of Interface class that inherits Tk from tkinter
 class Interface(Tk):
-    def __init__(self, nb_players, player_team="black"):
+    def __init__(self, user ,nb_players, player_team="black"):
         super().__init__()
 
+        self.user = user
         self.game_board = board.Board(nb_players, player_team)
         if nb_players == 1 and player_team == "white":
             self.game_board.board_list = self.game_board.get_AI_move()
@@ -77,7 +79,7 @@ class Interface(Tk):
         """Handles the event when the window is closed"""
         self.destroy()
         mk.music_player.swap_interface()
-        minter.Main_Interface()
+        minter.Main_Interface(self.user,)
 
     def on_click(self, event):
         """Handles click events on the canvas"""
@@ -176,13 +178,28 @@ class Interface(Tk):
         
     def save(self):
         """Saves the current game state to a file"""
-        with open("save", "wb") as f:   
-            pickle.dump(self.game_board.board_list, f)
+        with open(os.path.join(sys.path[0], "saves", self.user + ".txt"), "w") as f:   
+            f.write(str(self.game_board.board_list[0]))
+            for elem in range (1, len(self.game_board.board_list)) :
+                f.write(","+ str(self.game_board.board_list[elem]))
 
     def load(self):
         """Loads the game state from a file"""
-        with open("save", 'rb') as f:
-            self.game_board.board_list = pickle.load(f)
+        with open(os.path.join(sys.path[0], "saves", self.user + ".txt"), "r") as f:
+            line = f.readline()
+            lin = line.split(",")
+            if len(line) == 0:
+                tkm.showinfo("Load", "No save to load")
+                return
+            if len(lin) != 64 :
+                tkm.showinfo("Load", "Save is corrupted")
+                return
+            for k in range (len(lin)) : 
+                if lin[k] != "white" and lin[k] != "black":
+                    lin[k] = int(lin[k])
+
+            self.game_board.board_list = lin
+                    
         self.display_pawns()
 
 

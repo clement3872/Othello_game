@@ -15,6 +15,7 @@ class Main_Interface(Tk):
 		self.minsize(width=700, height=500)
 		self.maxsize(width=700, height=500)
 
+		
 		# Load images for the background and buttons
 		self.image_main_menu = tk.PhotoImage(file="Ressources/images/main_menu_background.png")
 		self.image_button_p = tk.PhotoImage(file="Ressources/images/button_icon_p_vs_p.png")
@@ -103,7 +104,7 @@ class Main_Interface(Tk):
 		"""Initiate a game session."""
 		self.exit_func()
 		mk.music_player.swap_interface()
-		inter.Interface(nb_players, player_team)
+		inter.Interface(self.user,nb_players, player_team)
 		
 	def exit_func(self):
 		"""Close the music player and the interface."""
